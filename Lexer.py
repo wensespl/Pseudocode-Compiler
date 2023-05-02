@@ -108,8 +108,10 @@ if __name__ == "__main__":
     input_file.close()
 
     text = ''.join(lines)
+    print("Codigo de entrada\n")
     print(text)
 
+    print("Tokens de salida\n")
     lexer = Lexer()
     lexer.build()
     lexer.test(text)

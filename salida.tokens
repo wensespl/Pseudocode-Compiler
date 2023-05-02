@@ -1,0 +1,263 @@
+Codigo de entrada
+
+# Variables y constantes
+num var1 var2
+23 45.25
+0.253
+5.
+-3 -4. -5.1
+""   "strings"
+# Arrays
+ENTERO arr[3]
+# Asignacion
+arr[2] = 10
+num = 34
+var1 = 15
+# Opedarores
++ - * / = %
+< <= > >= == <>
+()[] ,
+# Caracteres ignorados
+# Espacios
+# Tabulaciones
+# Comentarios
+# Palabras reservadas
+ENTERO x
+DECIMAL f
+# Input y output
+ENTRADA entrada
+SALIDA "salida" 123 x[4] funcion()
+# Subrutinas
+ENTERO SUBRUTINA nombrefuncion(ENTERO x, ENTERO y)
+DEVOLVER x + y
+FINSUBRUTINA
+# Condicionales
+SI x <= 0 ENTONCES
+DEVOLVER 0
+SINO SI x == 1 ENTONCES
+DEVOLVER 0
+SINO SI x == 2 ENTONCES
+DEVOLVER 1
+SINO
+DEVOLVER add(fibonacci(x - 2), fibonacci(x - 1))
+FINSI
+# Bucles while y for
+MIENTRAS y <> 100 HACER
+ENTRADA y
+SALIDA fibonacci(y)
+FINMIENTRAS
+PARA x = 0 HASTA 7
+y = y + x
+FINPARA
+# Caracteres ilegales
+$ ! @ ^ & {} : ; ? .
+Tokens de salida
+
+LexToken(NEWLINE,'\n',1,24)
+LexToken(VAR,'num',2,25)
+LexToken(VAR,'var1',2,29)
+LexToken(VAR,'var2',2,34)
+LexToken(NEWLINE,'\n',2,38)
+LexToken(INT_CONST,23,3,39)
+LexToken(DOUBLE_CONST,45.25,3,42)
+LexToken(NEWLINE,'\n',3,47)
+LexToken(DOUBLE_CONST,0.253,4,48)
+LexToken(NEWLINE,'\n',4,53)
+LexToken(DOUBLE_CONST,5.0,5,54)
+LexToken(NEWLINE,'\n',5,56)
+LexToken(MINUS,'-',6,57)
+LexToken(INT_CONST,3,6,58)
+LexToken(MINUS,'-',6,60)
+LexToken(DOUBLE_CONST,4.0,6,61)
+LexToken(MINUS,'-',6,64)
+LexToken(DOUBLE_CONST,5.1,6,65)
+LexToken(NEWLINE,'\n',6,68)
+LexToken(STRING_CONST,'',7,69)
+LexToken(STRING_CONST,'strings',7,74)
+LexToken(NEWLINE,'\n',7,83)
+LexToken(NEWLINE,'\n',8,92)
+LexToken(INT,'ENTERO',9,93)
+LexToken(VAR,'arr',9,100)
+LexToken(LBRACKET,'[',9,103)
+LexToken(INT_CONST,3,9,104)
+LexToken(RBRACKET,']',9,105)
+LexToken(NEWLINE,'\n',9,106)
+LexToken(NEWLINE,'\n',10,119)
+LexToken(VAR,'arr',11,120)
+LexToken(LBRACKET,'[',11,123)
+LexToken(INT_CONST,2,11,124)
+LexToken(RBRACKET,']',11,125)
+LexToken(EQUALS,'=',11,127)
+LexToken(INT_CONST,10,11,129)
+LexToken(NEWLINE,'\n',11,131)
+LexToken(VAR,'num',12,132)
+LexToken(EQUALS,'=',12,136)
+LexToken(INT_CONST,34,12,138)
+LexToken(NEWLINE,'\n',12,140)
+LexToken(VAR,'var1',13,141)
+LexToken(EQUALS,'=',13,146)
+LexToken(INT_CONST,15,13,148)
+LexToken(NEWLINE,'\n',13,150)
+LexToken(NEWLINE,'\n',14,163)
+LexToken(PLUS,'+',15,164)
+LexToken(MINUS,'-',15,166)
+LexToken(TIMES,'*',15,168)
+LexToken(DIVIDE,'/',15,170)
+LexToken(EQUALS,'=',15,172)
+LexToken(PERCENT,'%',15,174)
+LexToken(NEWLINE,'\n',15,175)
+LexToken(LESS_THAN,'<',16,176)
+LexToken(LESS_EQUAL,'<=',16,178)
+LexToken(GREATER_THAN,'>',16,181)
+LexToken(GREATER_EQUAL,'>=',16,183)
+LexToken(EQUALITY,'==',16,186)
+LexToken(NOT_EQUALITY,'<>',16,189)
+LexToken(NEWLINE,'\n',16,191)
+LexToken(LPAREN,'(',17,192)
+LexToken(RPAREN,')',17,193)
+LexToken(LBRACKET,'[',17,194)
+LexToken(RBRACKET,']',17,195)
+LexToken(COMMA,',',17,197)
+LexToken(NEWLINE,'\n',17,198)
+LexToken(NEWLINE,'\n',18,221)
+LexToken(NEWLINE,'\n',19,232)
+LexToken(NEWLINE,'\n',20,247)
+LexToken(NEWLINE,'\n',21,261)
+LexToken(NEWLINE,'\n',22,283)
+LexToken(INT,'ENTERO',23,284)
+LexToken(VAR,'x',23,291)
+LexToken(NEWLINE,'\n',23,292)
+LexToken(DOUBLE,'DECIMAL',24,293)
+LexToken(VAR,'f',24,301)
+LexToken(NEWLINE,'\n',24,302)
+LexToken(NEWLINE,'\n',25,319)
+LexToken(INPUT,'ENTRADA',26,320)
+LexToken(VAR,'entrada',26,328)
+LexToken(NEWLINE,'\n',26,335)
+LexToken(OUTPUT,'SALIDA',27,336)
+LexToken(STRING_CONST,'salida',27,343)
+LexToken(INT_CONST,123,27,352)
+LexToken(VAR,'x',27,356)
+LexToken(LBRACKET,'[',27,357)
+LexToken(INT_CONST,4,27,358)
+LexToken(RBRACKET,']',27,359)
+LexToken(VAR,'funcion',27,361)
+LexToken(LPAREN,'(',27,368)
+LexToken(RPAREN,')',27,369)
+LexToken(NEWLINE,'\n',27,370)
+LexToken(NEWLINE,'\n',28,383)
+LexToken(INT,'ENTERO',29,384)
+LexToken(SUBROUTINE,'SUBRUTINA',29,391)
+LexToken(VAR,'nombrefuncion',29,401)
+LexToken(LPAREN,'(',29,414)
+LexToken(INT,'ENTERO',29,415)
+LexToken(VAR,'x',29,422)
+LexToken(COMMA,',',29,423)
+LexToken(INT,'ENTERO',29,425)
+LexToken(VAR,'y',29,432)
+LexToken(RPAREN,')',29,433)
+LexToken(NEWLINE,'\n',29,434)
+LexToken(RETURN,'DEVOLVER',30,435)
+LexToken(VAR,'x',30,444)
+LexToken(PLUS,'+',30,446)
+LexToken(VAR,'y',30,448)
+LexToken(NEWLINE,'\n',30,449)
+LexToken(ENDSUBROUTINE,'FINSUBRUTINA',31,450)
+LexToken(NEWLINE,'\n',31,462)
+LexToken(NEWLINE,'\n',32,478)
+LexToken(IF,'SI',33,479)
+LexToken(VAR,'x',33,482)
+LexToken(LESS_EQUAL,'<=',33,484)
+LexToken(INT_CONST,0,33,487)
+LexToken(THEN,'ENTONCES',33,489)
+LexToken(NEWLINE,'\n',33,497)
+LexToken(RETURN,'DEVOLVER',34,498)
+LexToken(INT_CONST,0,34,507)
+LexToken(NEWLINE,'\n',34,508)
+LexToken(ELSE,'SINO',35,509)
+LexToken(IF,'SI',35,514)
+LexToken(VAR,'x',35,517)
+LexToken(EQUALITY,'==',35,519)
+LexToken(INT_CONST,1,35,522)
+LexToken(THEN,'ENTONCES',35,524)
+LexToken(NEWLINE,'\n',35,532)
+LexToken(RETURN,'DEVOLVER',36,533)
+LexToken(INT_CONST,0,36,542)
+LexToken(NEWLINE,'\n',36,543)
+LexToken(ELSE,'SINO',37,544)
+LexToken(IF,'SI',37,549)
+LexToken(VAR,'x',37,552)
+LexToken(EQUALITY,'==',37,554)
+LexToken(INT_CONST,2,37,557)
+LexToken(THEN,'ENTONCES',37,559)
+LexToken(NEWLINE,'\n',37,567)
+LexToken(RETURN,'DEVOLVER',38,568)
+LexToken(INT_CONST,1,38,577)
+LexToken(NEWLINE,'\n',38,578)
+LexToken(ELSE,'SINO',39,579)
+LexToken(NEWLINE,'\n',39,583)
+LexToken(RETURN,'DEVOLVER',40,584)
+LexToken(VAR,'add',40,593)
+LexToken(LPAREN,'(',40,596)
+LexToken(VAR,'fibonacci',40,597)
+LexToken(LPAREN,'(',40,606)
+LexToken(VAR,'x',40,607)
+LexToken(MINUS,'-',40,609)
+LexToken(INT_CONST,2,40,611)
+LexToken(RPAREN,')',40,612)
+LexToken(COMMA,',',40,613)
+LexToken(VAR,'fibonacci',40,615)
+LexToken(LPAREN,'(',40,624)
+LexToken(VAR,'x',40,625)
+LexToken(MINUS,'-',40,627)
+LexToken(INT_CONST,1,40,629)
+LexToken(RPAREN,')',40,630)
+LexToken(RPAREN,')',40,631)
+LexToken(NEWLINE,'\n',40,632)
+LexToken(ENDIF,'FINSI',41,633)
+LexToken(NEWLINE,'\n',41,638)
+LexToken(NEWLINE,'\n',42,659)
+LexToken(WHILE,'MIENTRAS',43,660)
+LexToken(VAR,'y',43,669)
+LexToken(NOT_EQUALITY,'<>',43,671)
+LexToken(INT_CONST,100,43,674)
+LexToken(DO,'HACER',43,678)
+LexToken(NEWLINE,'\n',43,683)
+LexToken(INPUT,'ENTRADA',44,684)
+LexToken(VAR,'y',44,692)
+LexToken(NEWLINE,'\n',44,693)
+LexToken(OUTPUT,'SALIDA',45,694)
+LexToken(VAR,'fibonacci',45,701)
+LexToken(LPAREN,'(',45,710)
+LexToken(VAR,'y',45,711)
+LexToken(RPAREN,')',45,712)
+LexToken(NEWLINE,'\n',45,713)
+LexToken(ENDWHILE,'FINMIENTRAS',46,714)
+LexToken(NEWLINE,'\n',46,725)
+LexToken(FOR,'PARA',47,726)
+LexToken(VAR,'x',47,731)
+LexToken(EQUALS,'=',47,733)
+LexToken(INT_CONST,0,47,735)
+LexToken(TO,'HASTA',47,737)
+LexToken(INT_CONST,7,47,743)
+LexToken(NEWLINE,'\n',47,744)
+LexToken(VAR,'y',48,745)
+LexToken(EQUALS,'=',48,747)
+LexToken(VAR,'y',48,749)
+LexToken(PLUS,'+',48,751)
+LexToken(VAR,'x',48,753)
+LexToken(NEWLINE,'\n',48,754)
+LexToken(ENDFOR,'FINPARA',49,755)
+LexToken(NEWLINE,'\n',49,762)
+LexToken(NEWLINE,'\n',50,784)
+Illegal character '$'
+Illegal character '!'
+Illegal character '@'
+Illegal character '^'
+Illegal character '&'
+Illegal character '{'
+Illegal character '}'
+Illegal character ':'
+Illegal character ';'
+Illegal character '?'
+Illegal character '.'
