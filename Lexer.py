@@ -15,23 +15,23 @@ class Lexer(object):
             print(tok)
 
     reserved = {
-        'INT': 'ENTERO',
-        'DOUBLE': 'DECIMAL',
-        'INPUT': 'ENTRADA',
-        'OUTPUT': 'SALIDA',
-        'SUBROUTINE': 'SUBRUTINA',
-        'ENDSUBROUTINE': 'FINSUBRUTINA',
-        'RETURN': 'DEVOLVER',
-        'IF': 'SI',
-        'THEN': 'ENTONCES',
-        'ELSE': 'SINO',
-        'ENDIF': 'FINSI',
-        'WHILE': 'MIENTRAS',
-        'DO': 'HACER',
-        'ENDWHILE': 'FINMIENTRAS',
-        'FOR': 'PARA',
-        'TO': 'HASTA',
-        'ENDFOR': 'FINPARA',
+        'ENTERO': 'INT',
+        'DECIMAL': 'DOUBLE',
+        'ENTRADA': 'INPUT',
+        'SALIDA': 'OUTPUT',
+        'SUBRUTINA': 'SUBROUTINE',
+        'FINSUBRUTINA': 'ENDSUBROUTINE',
+        'DEVOLVER': 'RETURN',
+        'SI': 'IF',
+        'ENTONCES': 'THEN',
+        'SINO': 'ELSE',
+        'FINSI': 'ENDIF',
+        'MIENTRAS': 'WHILE',
+        'HACER': 'DO',
+        'FINMIENTRAS': 'ENDWHILE',
+        'PARA': 'FOR',
+        'HASTA': 'TO',
+        'FINPARA': 'ENDFOR',
     }
 
     tokens = [
@@ -68,6 +68,7 @@ class Lexer(object):
     t_COMMA = r'\,'
 
     t_ignore = " \t"
+    t_ignore_COMMENT = r'\#.*'
 
     def t_VAR(self, t):
         r'[a-zA-Z_][a-zA-Z0-9_]*'
