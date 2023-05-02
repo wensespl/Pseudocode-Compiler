@@ -1,0 +1,2 @@
+ply==3.11
+tkterminal==0.1.0
