@@ -100,9 +100,15 @@ class Lexer(object):
 
 
 if __name__ == "__main__":
-    m = Lexer()
-    m.build()
-    m.test(
-        """x == 22 + 123
-        
-1+2""")
+    input_file = open("code.SPL")
+    lines = [line.lstrip()
+             for i, line in enumerate(input_file) if line.strip()]
+    lines[-1] = lines[-1].rstrip()
+    input_file.close()
+
+    text = ''.join(lines)
+    print(text)
+
+    lexer = Lexer()
+    lexer.build()
+    lexer.test(text)
