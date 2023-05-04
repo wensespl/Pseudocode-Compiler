@@ -10,7 +10,7 @@ num var1 var2
 
 # Arrays
 
-ENTERO arr[3]
+ENTERO arr[3] = [12, 234, 1234]
 
 # Asignacion
 

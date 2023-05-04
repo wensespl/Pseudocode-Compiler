@@ -26,10 +26,11 @@ class IDEFrame(Frame):
         self.container.config(menu=self.menu_bar)
 
         self.edit_area = ScrolledText(
-            self, borderwidth=30, relief='flat', font='Consolas 15')
+            self, borderwidth=20, relief='flat', font='Consolas 12')
         self.edit_area.pack(fill='both', expand=1)
 
-        self.terminal = Terminal(self, borderwidth=30, relief='flat')
+        self.terminal = Terminal(self, borderwidth=30,
+                                 relief='flat', background='Black', foreground='White')
         self.terminal.shell = True
         self.terminal.pack(expand=True, fill='both')
 
