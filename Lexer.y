@@ -11,67 +11,107 @@
 
 // Especificamos la gramatica
 %%
-statement : stmt_list;
-stmt_list : simple_stmt
-          | stmt_list NEWLINE simple_stmt;
-if_stmt : IF expression THEN NEWLINE stmt_list NEWLINE ENDIF
-        | IF expression THEN NEWLINE stmt_list NEWLINE ELSE NEWLINE stmt_list NEWLINE ENDIF
-        | IF expression THEN NEWLINE stmt_list NEWLINE ELSE if_stmt;
-while_stmt : WHILE expression DO NEWLINE stmt_list NEWLINE ENDWHILE;
-for_stmt : FOR assignment_stmt TO expression NEWLINE stmt_list NEWLINE ENDFOR;
-simple_stmt : expression
-            | expr_list
-            | arg_list
-            | assignment_stmt
-            | array_decl_stmt
-            | if_stmt
-            | while_stmt
-            | for_stmt
-            | output_stmt
-            | input_stmt
-            | function_stmt
-            | return_stmt;
-array_decl_stmt : DOUBLE array_index
-                | INT array_index;
-assignment_stmt : VAR EQUALS expression;
-assignment_stmt : array_index EQUALS expression;
-input_stmt : INPUT VAR
-           | INPUT array_index;
-output_stmt : OUTPUT expression;
-return_stmt : RETURN expression;
-function_header : INT SUBROUTINE VAR LPAREN arg_list RPAREN
-                | DOUBLE SUBROUTINE VAR LPAREN arg_list RPAREN
-                | INT SUBROUTINE VAR LPAREN RPAREN
-                | DOUBLE SUBROUTINE VAR LPAREN RPAREN;
-function_stmt : function_header NEWLINE stmt_list NEWLINE ENDSUBROUTINE;
-arg_list : INT VAR
-         | DOUBLE VAR
-         | arg_list COMMA INT VAR
-         | arg_list COMMA DOUBLE VAR;
-expr_list : expression COMMA expression
-          | expr_list COMMA expression;
-expression : expression PLUS expression
-           | expression MINUS expression
-           | expression TIMES expression
-           | expression DIVIDE expression
-           | expression PERCENT expression;
-expression : expression LESS_THAN expression
-           | expression GREATER_THAN expression
-           | expression LESS_EQUAL expression
-           | expression GREATER_EQUAL expression
-           | expression EQUALITY expression
-           | expression NOT_EQUALITY expression;
-expression : LPAREN expression RPAREN;
-expression : VAR LPAREN expression RPAREN
-           | VAR LPAREN expr_list RPAREN
-           | VAR LPAREN RPAREN;
-expression : array_index;
-array_index : VAR LBRACKET expression RBRACKET;
-expression : literal;
-literal : INT_CONST;
-literal : DOUBLE_CONST;
-literal : STRING_CONST;
-expression : VAR;
+exp: exp token | token;
+token: VAR
+     | INT_CONST
+     | DOUBLE_CONST
+     | STRING_CONST
+     | PLUS
+     | MINUS
+     | TIMES
+     | DIVIDE
+     | EQUALS
+     | PERCENT
+     | COMMA
+     | NEWLINE
+     | LPAREN
+     | RPAREN
+     | LBRACKET
+     | RBRACKET
+     | LESS_THAN
+     | LESS_EQUAL
+     | GREATER_THAN
+     | GREATER_EQUAL
+     | EQUALITY
+     | NOT_EQUALITY
+     | INT
+     | DOUBLE
+     | INPUT
+     | OUTPUT
+     | SUBROUTINE
+     | ENDSUBROUTINE
+     | RETURN
+     | IF
+     | THEN
+     | ELSE
+     | ENDIF
+     | WHILE
+     | DO
+     | ENDWHILE
+     | FOR
+     | TO
+     | ENDFOR;
+// statement : stmt_list;
+// stmt_list : simple_stmt
+//           | stmt_list NEWLINE simple_stmt;
+// if_stmt : IF expression THEN NEWLINE stmt_list NEWLINE ENDIF
+//         | IF expression THEN NEWLINE stmt_list NEWLINE ELSE NEWLINE stmt_list NEWLINE ENDIF
+//         | IF expression THEN NEWLINE stmt_list NEWLINE ELSE if_stmt;
+// while_stmt : WHILE expression DO NEWLINE stmt_list NEWLINE ENDWHILE;
+// for_stmt : FOR assignment_stmt TO expression NEWLINE stmt_list NEWLINE ENDFOR;
+// simple_stmt : expression
+//             | expr_list
+//             | arg_list
+//             | assignment_stmt
+//             | array_decl_stmt
+//             | if_stmt
+//             | while_stmt
+//             | for_stmt
+//             | output_stmt
+//             | input_stmt
+//             | function_stmt
+//             | return_stmt;
+// array_decl_stmt : DOUBLE array_index
+//                 | INT array_index;
+// assignment_stmt : VAR EQUALS expression;
+// assignment_stmt : array_index EQUALS expression;
+// input_stmt : INPUT VAR
+//            | INPUT array_index;
+// output_stmt : OUTPUT expression;
+// return_stmt : RETURN expression;
+// function_header : INT SUBROUTINE VAR LPAREN arg_list RPAREN
+//                 | DOUBLE SUBROUTINE VAR LPAREN arg_list RPAREN
+//                 | INT SUBROUTINE VAR LPAREN RPAREN
+//                 | DOUBLE SUBROUTINE VAR LPAREN RPAREN;
+// function_stmt : function_header NEWLINE stmt_list NEWLINE ENDSUBROUTINE;
+// arg_list : INT VAR
+//          | DOUBLE VAR
+//          | arg_list COMMA INT VAR
+//          | arg_list COMMA DOUBLE VAR;
+// expr_list : expression COMMA expression
+//           | expr_list COMMA expression;
+// expression : expression PLUS expression
+//            | expression MINUS expression
+//            | expression TIMES expression
+//            | expression DIVIDE expression
+//            | expression PERCENT expression;
+// expression : expression LESS_THAN expression
+//            | expression GREATER_THAN expression
+//            | expression LESS_EQUAL expression
+//            | expression GREATER_EQUAL expression
+//            | expression EQUALITY expression
+//            | expression NOT_EQUALITY expression;
+// expression : LPAREN expression RPAREN;
+// expression : VAR LPAREN expression RPAREN
+//            | VAR LPAREN expr_list RPAREN
+//            | VAR LPAREN RPAREN;
+// expression : array_index;
+// array_index : VAR LBRACKET expression RBRACKET;
+// expression : literal;
+// literal : INT_CONST;
+// literal : DOUBLE_CONST;
+// literal : STRING_CONST;
+// expression : VAR;
 %%
 
 void yyerror(char *msg) {
