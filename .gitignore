@@ -5,3 +5,5 @@ pyvenv.cfg
 
 Lexer.tab.c
 a.out
+
+.vscode

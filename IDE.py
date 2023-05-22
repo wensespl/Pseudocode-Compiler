@@ -3,10 +3,7 @@ from tkinter.ttk import Frame, Label, Entry, Button
 from tkinter.scrolledtext import ScrolledText
 from tkinter.messagebox import showwarning
 import re
-# import ctypes
 from tkterminal import Terminal
-
-# ctypes.windll.shcore.SetProcessDpiAwareness(True)
 
 
 class IDEFrame(Frame):
