@@ -14,37 +14,57 @@ class Lexer(object):
                 break
             print(tok)
 
-    reserved = {
-        'ENTERO': 'INT',
-        'DECIMAL': 'DOUBLE',
-        'ENTRADA': 'INPUT',
-        'SALIDA': 'OUTPUT',
-        'SUBRUTINA': 'SUBROUTINE',
-        'FINSUBRUTINA': 'ENDSUBROUTINE',
-        'DEVOLVER': 'RETURN',
-        'SI': 'IF',
-        'ENTONCES': 'THEN',
-        'SINO': 'ELSE',
-        'FINSI': 'ENDIF',
-        'MIENTRAS': 'WHILE',
-        'HACER': 'DO',
-        'FINMIENTRAS': 'ENDWHILE',
-        'PARA': 'FOR',
-        'HASTA': 'TO',
-        'FINPARA': 'ENDFOR',
-    }
+    # reserved = {
+    #     'ENTERO': 'INT',
+    #     'DECIMAL': 'DOUBLE',
+    #     'ENTRADA': 'INPUT',
+    #     'SALIDA': 'OUTPUT',
+    #     'SUBRUTINA': 'SUBROUTINE',
+    #     'FINSUBRUTINA': 'ENDSUBROUTINE',
+    #     'DEVOLVER': 'RETURN',
+    #     'SI': 'IF',
+    #     'ENTONCES': 'THEN',
+    #     'SINO': 'ELSE',
+    #     'FINSI': 'ENDIF',
+    #     'MIENTRAS': 'WHILE',
+    #     'HACER': 'DO',
+    #     'FINMIENTRAS': 'ENDWHILE',
+    #     'PARA': 'FOR',
+    #     'HASTA': 'TO',
+    #     'FINPARA': 'ENDFOR',
+    # }
 
-    tokens = [
+    # tokens = [
+    #     'VAR',
+    #     'INT_CONST', 'DOUBLE_CONST', 'STRING_CONST',
+    #     'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'EQUALS', 'PERCENT',
+    #     'COMMA', 'NEWLINE',
+    #     'LPAREN', 'RPAREN',
+    #     'LBRACKET', 'RBRACKET',
+    #     'LESS_THAN', 'LESS_EQUAL',
+    #     'GREATER_THAN', 'GREATER_EQUAL',
+    #     'EQUALITY', 'NOT_EQUALITY'
+    # ] + list(reserved.values())
+    
+    tokens = (
         'VAR',
-        'INT_CONST', 'DOUBLE_CONST', 'STRING_CONST',
-        'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'EQUALS', 'PERCENT',
-        'COMMA', 'NEWLINE',
-        'LPAREN', 'RPAREN',
-        'LBRACKET', 'RBRACKET',
-        'LESS_THAN', 'LESS_EQUAL',
-        'GREATER_THAN', 'GREATER_EQUAL',
-        'EQUALITY', 'NOT_EQUALITY'
-    ] + list(reserved.values())
+        'INT','DOUBLE',
+        'INPUT','OUTPUT',
+        'SUBROUTINE','ENDSUBROUTINE','RETURN',
+        'IF','THEN','ELSE','ENDIF',
+        'WHILE','DO','ENDWHILE',
+        'FOR','TO' 'ENDFOR',
+        'INT_CONST','DOUBLE_CONST','STRING_CONST',
+        'PLUS','MINUS','TIMES','DIVIDE','EQUALS','PERCENT',
+        'COMMA','NEWLINE',
+        'LPAREN','RPAREN',
+        'LBRACKET','RBRACKET',
+        'LESS_THAN','LESS_EQUAL',
+        'GREATER_THAN','GREATER_EQUAL',
+        'EQUALITY','NOT_EQUALITY'
+        )
+    
+    reserved = r''.join(["(?!"+keyword+")" for keyword in tokens])
 
     t_PLUS = r'\+'
     t_MINUS = r'-'
@@ -66,14 +86,39 @@ class Lexer(object):
     t_RBRACKET = r'\]'
 
     t_COMMA = r'\,'
+    
+    t_SUBROUTINE     = 'SUBRUTINA'
+    t_ENDSUBROUTINE  = 'FINSUBRUTINA'
+    t_RETURN         = 'DEVOLVER'
+
+    t_INT            = 'ENTERO'
+    t_DOUBLE         = 'DECIMAL'
+
+    t_INPUT          = 'ENTRADA'
+    t_OUTPUT         = 'SALIDA'
+
+    t_IF             = 'SI'
+    t_THEN           = 'ENTONCES'
+    t_ELSE           = 'SINO'
+    t_ENDIF          = 'FINSI'
+
+    t_WHILE          = 'MIENTRAS'
+    t_DO             = 'HACER'
+    t_ENDWHILE       = 'FINMIENTRAS'
+
+    t_FOR            = 'PARA'
+    t_TO             = 'HASTA'
+    t_ENDFOR         = 'FINPARA'
+
+    t_VAR            = reserved + r'[a-zA-Z_][a-zA-Z0-9_]*'
 
     t_ignore = " \t"
-    t_ignore_COMMENT = r'\#.*'
+    # t_ignore_COMMENT = r'\#.*'
 
-    def t_VAR(self, t):
-        r'[a-zA-Z_][a-zA-Z0-9_]*'
-        t.type = self.reserved.get(t.value, 'VAR')
-        return t
+    # def t_VAR(self, t):
+    #     r'[a-zA-Z_][a-zA-Z0-9_]*'
+    #     t.type = self.reserved.get(t.value, 'VAR')
+    #     return t
 
     def t_DOUBLE_CONST(self, t):
         r'\d+\.\d*'
