@@ -43,10 +43,10 @@ simple_stmt: assig_stmt
            | function_stmt
            | return_stmt;
 
-if_stmt: IF exp_comp THEN stmt_list ENDIF
-       | IF exp_comp THEN stmt_list ELSE stmt_list ENDIF;
+if_stmt: IF exp THEN stmt_list ENDIF
+       | IF exp THEN stmt_list ELSE stmt_list ENDIF;
 
-while_stmt: WHILE exp_comp DO stmt_list ENDWHILE;
+while_stmt: WHILE exp DO stmt_list ENDWHILE;
 
 for_stmt: FOR assig_stmt TO INTCONST stmt_list ENDFOR;
 
