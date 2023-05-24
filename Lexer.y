@@ -4,13 +4,15 @@
   #include<ctype.h>
   char lexema[255];
   void yyerror(char *);
+  int yylex();
+  int IsReservedWord(char[], int);
 %}
 
 // Especificamos los tokens
-%token VAR INT_CONST DOUBLE_CONST STRING_CONST
+%token VAR INTCONST DOUBLECONST STRINGCONST
 %token PLUS MINUS TIMES DIVIDE EQUALS PERCENT UMINUS
-%token COMMA NEWLINE LPAREN RPAREN LBRACKET RBRACKET
-%token LESS_THAN LESS_EQUAL GREATER_THAN GREATER_EQUAL EQUALITY NOT_EQUALITY
+%token COMMA LPAREN RPAREN LBRACKET RBRACKET
+%token LESSTHAN LESSEQUAL GREATERTHAN GREATEREQUAL EQUALITY NOTEQUALITY
 %token INT DOUBLE
 %token INPUT OUTPUT
 %token SUBROUTINE ENDSUBROUTINE RETURN
@@ -18,79 +20,123 @@
 %token WHILE DO ENDWHILE
 %token FOR TO ENDFOR
 
-%left  LESS_THAN LESS_EQUAL GREATER_THAN GREATER_EQUAL EQUALITY NOT_EQUALITY
+%left  LESSTHAN LESSEQUAL GREATERTHAN GREATEREQUAL EQUALITY NOTEQUALITY
 %left PLUS MINUS
 %left TIMES DIVIDE PERCENT
 %right UMINUS
 
+%start stmt_list
+
 // Especificamos la gramatica
 %%
-statement : stmt_list;
-stmt_list : simple_stmt
-          | stmt_list NEWLINE simple_stmt;
-if_stmt : IF expression THEN NEWLINE stmt_list NEWLINE ENDIF
-        | IF expression THEN NEWLINE stmt_list NEWLINE ELSE NEWLINE stmt_list NEWLINE ENDIF
-        | IF expression THEN NEWLINE stmt_list NEWLINE ELSE if_stmt;
-while_stmt : WHILE expression DO NEWLINE stmt_list NEWLINE ENDWHILE;
-for_stmt : FOR assignment_stmt TO expression NEWLINE stmt_list NEWLINE ENDFOR;
-simple_stmt : expression
-            | expr_list
-            | arg_list
-            | assignment_stmt
-            | array_decl_stmt
-            | if_stmt
-            | while_stmt
-            | for_stmt
-            | output_stmt
-            | input_stmt
-            | function_stmt
-            | return_stmt;
-array_decl_stmt : DOUBLE array_index
-                | INT array_index;
-assignment_stmt : VAR EQUALS expression;
-assignment_stmt : array_index EQUALS expression;
-input_stmt : INPUT VAR
-           | INPUT array_index;
-output_stmt : OUTPUT expression;
-return_stmt : RETURN expression;
+stmt_list: simple_stmt
+         | stmt_list simple_stmt;
+
+simple_stmt: assig_stmt
+           | array_decl_stmt
+           | var_decl_stmt
+           | if_stmt
+           | while_stmt
+           | for_stmt
+           | output_stmt
+           | input_stmt
+           | function_stmt
+           | return_stmt;
+
+if_stmt: IF exp_comp THEN stmt_list ENDIF
+       | IF exp_comp THEN stmt_list ELSE stmt_list ENDIF;
+
+while_stmt: WHILE exp_comp DO stmt_list ENDWHILE;
+
+for_stmt: FOR assig_stmt TO INTCONST stmt_list ENDFOR;
+
+array_decl_stmt: DOUBLE array_index
+               | INT array_index;
+
+var_decl_stmt: DOUBLE var_list
+             | INT var_list;
+var_list: VAR
+        | var_list COMMA VAR;
+
+assig_stmt: VAR EQUALS exp;
+          | array_index EQUALS exp;
+
+input_stmt: INPUT VAR
+          | INPUT array_index;
+output_stmt : OUTPUT exp;
+return_stmt : RETURN exp;
+
 function_header : INT SUBROUTINE VAR LPAREN arg_list RPAREN
                 | DOUBLE SUBROUTINE VAR LPAREN arg_list RPAREN
                 | INT SUBROUTINE VAR LPAREN RPAREN
                 | DOUBLE SUBROUTINE VAR LPAREN RPAREN;
-function_stmt : function_header NEWLINE stmt_list NEWLINE ENDSUBROUTINE;
+function_stmt : function_header stmt_list ENDSUBROUTINE;
 arg_list : INT VAR
          | DOUBLE VAR
          | arg_list COMMA INT VAR
          | arg_list COMMA DOUBLE VAR;
-expr_list : expression COMMA expression
-          | expr_list COMMA expression;
-expression : expression PLUS expression
-           | expression MINUS expression
-           | expression TIMES expression
-           | expression DIVIDE expression
-           | expression PERCENT expression;
-expression : expression LESS_THAN expression
-           | expression GREATER_THAN expression
-           | expression LESS_EQUAL expression
-           | expression GREATER_EQUAL expression
-           | expression EQUALITY expression
-           | expression NOT_EQUALITY expression;
-expression : MINUS expression %prec UMINUS;
-expression : LPAREN expression RPAREN;
-expression : VAR LPAREN expression RPAREN
-           | VAR LPAREN expr_list RPAREN
-           | VAR LPAREN RPAREN;
-expression : array_index;
-array_index : VAR LBRACKET expression RBRACKET;
-expression : literal;
-literal : INT_CONST;
-literal : DOUBLE_CONST;
-literal : STRING_CONST;
-expression : VAR;
+
+expr_list : exp COMMA exp
+          | expr_list COMMA exp;
+
+exp: exp_arit
+   | exp_comp
+   | array_index
+   | exp_fun_call
+   | exp_literal
+   | VAR;
+
+exp_arit: exp PLUS exp
+        | exp MINUS exp
+        | exp TIMES exp
+        | exp DIVIDE exp
+        | exp PERCENT exp
+        | MINUS exp %prec UMINUS
+        | LPAREN exp RPAREN;
+
+exp_comp: exp LESSTHAN exp
+        | exp GREATERTHAN exp
+        | exp LESSEQUAL exp
+        | exp GREATEREQUAL exp
+        | exp EQUALITY exp
+        | exp NOTEQUALITY exp;
+
+exp_fun_call: VAR LPAREN exp RPAREN
+            | VAR LPAREN expr_list RPAREN
+            | VAR LPAREN RPAREN;
+
+array_index: VAR LBRACKET INTCONST RBRACKET;
+
+exp_literal: INTCONST;
+           | DOUBLECONST;
+           | STRINGCONST;
 %%
 
 void yyerror(char *msg) {
   printf("error: %s", msg);
+}
+
+int IsReservedWord(char lexema[], int default_token) {
+  //strcmp considera mayusculas y minusculas
+  //strcasecmp ignora mayusculas de minusculas
+  if(strcmp(lexema,"ENTERO") == 0) return INT;
+  if(strcmp(lexema,"DECIMAL") == 0) return DOUBLE;
+  if(strcmp(lexema,"ENTRADA") == 0) return INPUT;
+  if(strcmp(lexema,"SALIDA") == 0) return OUTPUT;
+  if(strcmp(lexema,"SUBRUTINA") == 0) return SUBROUTINE;
+  if(strcmp(lexema,"FINSUBRUTINA") == 0) return ENDSUBROUTINE;
+  if(strcmp(lexema,"DEVOLVER") == 0) return RETURN;
+  if(strcmp(lexema,"SI") == 0) return IF;
+  if(strcmp(lexema,"ENTONCES") == 0) return THEN;
+  if(strcmp(lexema,"SINO") == 0) return ELSE;
+  if(strcmp(lexema,"FINSI") == 0) return ENDIF;
+  if(strcmp(lexema,"MIENTRAS") == 0) return WHILE;
+  if(strcmp(lexema,"HACER") == 0) return DO;
+  if(strcmp(lexema,"FINMIENTRAS") == 0) return ENDWHILE;
+  if(strcmp(lexema,"PARA") == 0) return FOR;
+  if(strcmp(lexema,"HASTA") == 0) return TO;
+  if(strcmp(lexema,"FINPARA") == 0) return ENDFOR;
+  return default_token;
 }
 
 // Especificamos las reglas de los tokens
@@ -101,6 +147,7 @@ int yylex() {
 
     if(c == '\t') continue;
     if(c == ' ') continue;
+    if(isspace(c)) continue;
 
     if(c == '+') return PLUS;
     if(c == '-') return MINUS;
@@ -109,36 +156,36 @@ int yylex() {
     if(c == '=') return EQUALS;
     if(c == '%') return PERCENT;
 
-    if(c == '<') return LESS_THAN;
-    if(c == '>') return GREATER_THAN;
+    if(c == '<') return LESSTHAN;
+    if(c == '>') return GREATERTHAN;
 
-    char LESSEQUAL[] = "<=";
-    if(c == LESSEQUAL[0]) {
+    char LESS_EQUAL[] = "<=";
+    if(c == LESS_EQUAL[0]) {
       int i = 0, j = 0;
       do {
         lexema[i++] = c;
         c = getchar();
         j++;
-      } while (c == LESSEQUAL[j] && j < 2);
+      } while (c == LESS_EQUAL[j] && j < 2);
       if(j == 2) {
         ungetc(c, stdin);
-        lexema[i] == 0;
-        return LESS_EQUAL;
+        lexema[i] = 0;
+        return LESSEQUAL;
       }
     }
 
-    char GREATEREQUAL[] = ">=";
-    if(c == GREATEREQUAL[0]) {
+    char GREATER_EQUAL[] = ">=";
+    if(c == GREATER_EQUAL[0]) {
       int i = 0, j = 0;
       do {
         lexema[i++] = c;
         c = getchar();
         j++;
-      } while (c == GREATEREQUAL[j] && j < 2);
+      } while (c == GREATER_EQUAL[j] && j < 2);
       if(j == 2) {
         ungetc(c, stdin);
-        lexema[i] == 0;
-        return GREATER_EQUAL;
+        lexema[i] = 0;
+        return GREATEREQUAL;
       }
     }
 
@@ -152,23 +199,23 @@ int yylex() {
       } while (c == EQUALITYT[j] && j < 2);
       if(j == 2) {
         ungetc(c, stdin);
-        lexema[i] == 0;
+        lexema[i] = 0;
         return EQUALITY;
       }
     }
 
-    char NOTEQUALITY[] = "<>";
-    if(c == NOTEQUALITY[0]) {
+    char NOTEQUALITYT[] = "<>";
+    if(c == NOTEQUALITYT[0]) {
       int i = 0, j = 0;
       do {
         lexema[i++] = c;
         c = getchar();
         j++;
-      } while (c == NOTEQUALITY[j] && j < 2);
+      } while (c == NOTEQUALITYT[j] && j < 2);
       if(j == 2) {
         ungetc(c, stdin);
-        lexema[i] == 0;
-        return NOT_EQUALITY;
+        lexema[i] = 0;
+        return NOTEQUALITY;
       }
     }
 
@@ -179,270 +226,30 @@ int yylex() {
 
     if(c == ',') return COMMA;
 
-    char ENTERO[] = "ENTERO";
-    if(c == ENTERO[0]) {
-      int i = 0, j = 0;
+    if(c == 34) {
+      int i = 0;
       do {
         lexema[i++] = c;
         c = getchar();
-        j++;
-      } while (c == ENTERO[j] && j < 6);
-      if(j == 6) {
-        ungetc(c, stdin);
-        lexema[i] == 0;
-        return INT;
-      }
-    }
-
-    char DECIMAL[] = "DECIMAL";
-    if(c == DECIMAL[0]) {
-      int i = 0, j = 0;
-      do {
+      } while(c != 34);
+      if(c == 34) {
         lexema[i++] = c;
         c = getchar();
-        j++;
-      } while (c == DECIMAL[j] && j < 7);
-      if(j == 7) {
-        ungetc(c, stdin);
-        lexema[i] == 0;
-        return DOUBLE;
       }
-    }
-
-    char ENTRADA[] = "ENTRADA";
-    if(c == ENTRADA[0]) {
-      int i = 0, j = 0;
-      do {
-        lexema[i++] = c;
-        c = getchar();
-        j++;
-      } while (c == ENTRADA[j] && j < 7);
-      if(j == 7) {
-        ungetc(c, stdin);
-        lexema[i] == 0;
-        return INPUT;
-      }
-    }
-
-    char SALIDA[] = "SALIDA";
-    if(c == SALIDA[0]) {
-      int i = 0, j = 0;
-      do {
-        lexema[i++] = c;
-        c = getchar();
-        j++;
-      } while (c == SALIDA[j] && j < 6);
-      if(j == 6) {
-        ungetc(c, stdin);
-        lexema[i] == 0;
-        return OUTPUT;
-      }
-    }
-
-    char SUBRUTINA[] = "SUBRUTINA";
-    if(c == SUBRUTINA[0]) {
-      int i = 0, j = 0;
-      do {
-        lexema[i++] = c;
-        c = getchar();
-        j++;
-      } while (c == SUBRUTINA[j] && j < 9);
-      if(j == 9) {
-        ungetc(c, stdin);
-        lexema[i] == 0;
-        return SUBROUTINE;
-      }
-    }
-
-    char FINSUBRUTINA[] = "FINSUBRUTINA";
-    if(c == FINSUBRUTINA[0]) {
-      int i = 0, j = 0;
-      do {
-        lexema[i++] = c;
-        c = getchar();
-        j++;
-      } while (c == FINSUBRUTINA[j] && j < 12);
-      if(j == 12) {
-        ungetc(c, stdin);
-        lexema[i] == 0;
-        return ENDSUBROUTINE;
-      }
-    }
-
-    char DEVOLVER[] = "DEVOLVER";
-    if(c == DEVOLVER[0]) {
-      int i = 0, j = 0;
-      do {
-        lexema[i++] = c;
-        c = getchar();
-        j++;
-      } while (c == DEVOLVER[j] && j < 8);
-      if(j == 8) {
-        ungetc(c, stdin);
-        lexema[i] == 0;
-        return RETURN;
-      }
-    }
-
-    char SI[] = "SI";
-    if(c == SI[0]) {
-      int i = 0, j = 0;
-      do {
-        lexema[i++] = c;
-        c = getchar();
-        j++;
-      } while (c == SI[j] && j < 2);
-      if(j == 2) {
-        ungetc(c, stdin);
-        lexema[i] == 0;
-        return IF;
-      }
-    }
-
-    char ENTONCES[] = "ENTONCES";
-    if(c == ENTONCES[0]) {
-      int i = 0, j = 0;
-      do {
-        lexema[i++] = c;
-        c = getchar();
-        j++;
-      } while (c == ENTONCES[j] && j < 8);
-      if(j == 8) {
-        ungetc(c, stdin);
-        lexema[i] == 0;
-        return THEN;
-      }
-    }
-
-    char SINO[] = "SINO";
-    if(c == SINO[0]) {
-      int i = 0, j = 0;
-      do {
-        lexema[i++] = c;
-        c = getchar();
-        j++;
-      } while (c == SINO[j] && j < 4);
-      if(j == 4) {
-        ungetc(c, stdin);
-        lexema[i] == 0;
-        return ELSE;
-      }
-    }
-
-    char FINSI[] = "FINSI";
-    if(c == FINSI[0]) {
-      int i = 0, j = 0;
-      do {
-        lexema[i++] = c;
-        c = getchar();
-        j++;
-      } while (c == FINSI[j] && j < 5);
-      if(j == 5) {
-        ungetc(c, stdin);
-        lexema[i] == 0;
-        return ENDIF;
-      }
-    }
-
-    char MIENTRAS[] = "MIENTRAS";
-    if(c == MIENTRAS[0]) {
-      int i = 0, j = 0;
-      do {
-        lexema[i++] = c;
-        c = getchar();
-        j++;
-      } while (c == MIENTRAS[j] && j < 8);
-      if(j == 8) {
-        ungetc(c, stdin);
-        lexema[i] == 0;
-        return WHILE;
-      }
-    }
-
-    char HACER[] = "HACER";
-    if(c == HACER[0]) {
-      int i = 0, j = 0;
-      do {
-        lexema[i++] = c;
-        c = getchar();
-        j++;
-      } while (c == HACER[j] && j < 5);
-      if(j == 5) {
-        ungetc(c, stdin);
-        lexema[i] == 0;
-        return DO;
-      }
-    }
-
-    char FINMIENTRAS[] = "FINMIENTRAS";
-    if(c == FINMIENTRAS[0]) {
-      int i = 0, j = 0;
-      do {
-        lexema[i++] = c;
-        c = getchar();
-        j++;
-      } while (c == FINMIENTRAS[j] && j < 11);
-      if(j == 11) {
-        ungetc(c, stdin);
-        lexema[i] == 0;
-        return ENDWHILE;
-      }
-    }
-
-    char PARA[] = "PARA";
-    if(c == PARA[0]) {
-      int i = 0, j = 0;
-      do {
-        lexema[i++] = c;
-        c = getchar();
-        j++;
-      } while (c == PARA[j] && j < 4);
-      if(j == 4) {
-        ungetc(c, stdin);
-        lexema[i] == 0;
-        return FOR;
-      }
-    }
-
-    char HASTA[] = "HASTA";
-    if(c == HASTA[0]) {
-      int i = 0, j = 0;
-      do {
-        lexema[i++] = c;
-        c = getchar();
-        j++;
-      } while (c == HASTA[j] && j < 5);
-      if(j == 5) {
-        ungetc(c, stdin);
-        lexema[i] == 0;
-        return TO;
-      }
-    }
-
-    char FINPARA[] = "FINPARA";
-    if(c == FINPARA[0]) {
-      int i = 0, j = 0;
-      do {
-        lexema[i++] = c;
-        c = getchar();
-        j++;
-      } while (c == FINPARA[j] && j < 7);
-      if(j == 7) {
-        ungetc(c, stdin);
-        lexema[i] == 0;
-        return ENDFOR;
-      }
+      ungetc(c, stdin);
+      lexema[i] = 0;
+      return STRINGCONST;
     }
 
     if(isalpha(c) || c == '_'){
-      int i=0;
+      int i = 0;
       do {
         lexema[i++] = c;
         c = getchar();
       } while(isalnum(c) || c == '_');
       ungetc(c, stdin);
-      lexema[i] == 0;
-      return VAR;
+      lexema[i] = '\0';
+      return IsReservedWord(lexema, VAR);
     }
 
     if(isdigit(c)) {
@@ -460,35 +267,16 @@ int yylex() {
             c = getchar();
           } while(isdigit(c));
           ungetc(c, stdin);
-          lexema[i] == 0;
-          return DOUBLE_CONST;
+          lexema[i] = 0;
+          return DOUBLECONST;
         }
+        ungetc(c, stdin);
+        lexema[i] = 0;
+        return DOUBLECONST;
       }
       ungetc(c, stdin);
-      lexema[i] == 0;
-      return INT_CONST;
-    }
-
-    if(c == '"') {
-      int i=0;
-      do {
-        lexema[i++] = c;
-        c = getchar();
-      } while(c != '"');
-      ungetc(c, stdin);
-      lexema[i] == 0;
-      return STRING_CONST;
-    }
-
-    if(c == '\n'){
-      int i=0;
-      do {
-        lexema[i++] = c;
-        c = getchar();
-      } while(c == '\n');
-      ungetc(c, stdin);
-      lexema[i] == 0;
-      return NEWLINE;
+      lexema[i] = 0;
+      return INTCONST;
     }
 
     return c;
