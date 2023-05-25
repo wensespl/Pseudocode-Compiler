@@ -8,7 +8,6 @@
   int IsReservedWord(char[], int);
 %}
 
-// Especificamos los tokens
 %token VAR INTCONST DOUBLECONST STRINGCONST
 %token PLUS MINUS TIMES DIVIDE EQUALS PERCENT UMINUS
 %token COMMA LPAREN RPAREN LBRACKET RBRACKET
@@ -20,14 +19,8 @@
 %token WHILE DO ENDWHILE
 %token FOR TO ENDFOR
 
-%left  LESSTHAN LESSEQUAL GREATERTHAN GREATEREQUAL EQUALITY NOTEQUALITY
-%left PLUS MINUS
-%left TIMES DIVIDE PERCENT
-%right UMINUS
-
 %start stmt_list
 
-// Especificamos la gramatica
 %%
 stmt_list: simple_stmt
          | stmt_list simple_stmt;
@@ -58,7 +51,7 @@ var_decl_stmt: DOUBLE var_list
 var_list: VAR
         | var_list COMMA VAR;
 
-assig_stmt: VAR EQUALS exp;
+assig_stmt: VAR EQUALS exp
           | array_index EQUALS exp;
 
 input_stmt: INPUT VAR
@@ -71,6 +64,9 @@ function_header : INT SUBROUTINE VAR LPAREN arg_list RPAREN
                 | INT SUBROUTINE VAR LPAREN RPAREN
                 | DOUBLE SUBROUTINE VAR LPAREN RPAREN;
 function_stmt : function_header stmt_list ENDSUBROUTINE;
+exp_fun_call: VAR LPAREN exp RPAREN
+            | VAR LPAREN expr_list RPAREN
+            | VAR LPAREN RPAREN;
 arg_list : INT VAR
          | DOUBLE VAR
          | arg_list COMMA INT VAR
@@ -79,37 +75,36 @@ arg_list : INT VAR
 expr_list : exp COMMA exp
           | expr_list COMMA exp;
 
-exp: exp_arit
-   | exp_comp
-   | array_index
-   | exp_fun_call
-   | exp_literal
-   | VAR;
-
-exp_arit: exp PLUS exp
-        | exp MINUS exp
-        | exp TIMES exp
-        | exp DIVIDE exp
-        | exp PERCENT exp
-        | MINUS exp %prec UMINUS
-        | LPAREN exp RPAREN;
-
-exp_comp: exp LESSTHAN exp
-        | exp GREATERTHAN exp
-        | exp LESSEQUAL exp
-        | exp GREATEREQUAL exp
-        | exp EQUALITY exp
-        | exp NOTEQUALITY exp;
-
-exp_fun_call: VAR LPAREN exp RPAREN
-            | VAR LPAREN expr_list RPAREN
-            | VAR LPAREN RPAREN;
+exp: exp EQUALITY term
+   | exp NOTEQUALITY term
+   | term;
+term: term LESSTHAN exp_arit
+    | term GREATERTHAN exp_arit
+    | term LESSEQUAL exp_arit
+    | term GREATEREQUAL exp_arit
+    | exp_arit;
+exp_arit: exp_arit PLUS term_arit1
+        | exp_arit MINUS term_arit1
+        | term_arit1;
+term_arit1: term_arit1 TIMES term_arit2
+          | term_arit1 DIVIDE term_arit2
+          | term_arit1 PERCENT term_arit2
+          | term_arit2;
+term_arit2: MINUS term_arit2 %prec UMINUS
+          | term_arit3;
+term_arit3: LPAREN exp RPAREN
+          | INTCONST
+          | DOUBLECONST
+          | STRINGCONST
+          | VAR
+          | array_index
+          | exp_fun_call;
 
 array_index: VAR LBRACKET INTCONST RBRACKET;
 
-exp_literal: INTCONST;
-           | DOUBLECONST;
-           | STRINGCONST;
+// exp_literal: INTCONST;
+//            | DOUBLECONST;
+//            | STRINGCONST;
 %%
 
 void yyerror(char *msg) {

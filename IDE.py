@@ -6,9 +6,6 @@ import re
 from tkterminal import Terminal
 
 
-# Convert an RGB tuple to a HEX string using the % Operator
-# 02 means print 2 characters
-# x means hexadecimal
 def rgbToHex(rgb):
     return "#%02x%02x%02x" % rgb
 
@@ -17,22 +14,23 @@ normal = rgbToHex((234, 234, 234))
 keywords = rgbToHex((234, 95, 95))
 comments = rgbToHex((95, 234, 165))
 string = rgbToHex((234, 162, 95))
+numbers = rgbToHex((255, 128, 0))
 function = rgbToHex((95, 211, 234))
 background = rgbToHex((42, 42, 42))
 font = 'Consolas 12'
 
-# Define a list of Regex Pattern that should be colored in a certain way
 repl = [
     ['(^| )(ENTERO|DECIMAL|ENTRADA|SALIDA|SUBRUTINA|FINSUBRUTINA|DEVOLVER|SI|ENTONCES|SINO|FINSI|MIENTRAS|HACER|FINMIENTRAS|PARA|HASTA|FINPARA)($| )', keywords],
-    ['".*?"', string],
-    ['#.*?$', comments],
+    [r'\d+(\.\d*)?', numbers],
+    [r'".*?"', string],
+    ['#.*?$', comments]
 ]
 
 class IDEFrame(Frame):
     def __init__(self, container):
         super().__init__(container)
         self.container = container
-        self.previousText = ''
+        self.previous_text = ''
 
         self.__config()
 
@@ -61,9 +59,9 @@ class IDEFrame(Frame):
         self.terminal.pack(expand=True, fill='both')
     
     def changes(self, event=None):
-        # If actually no changes have been made stop / return the function
-        if self.edit_area.get('1.0', "end") == self.previousText:
+        if self.edit_area.get('1.0', "end") == self.previous_text:
             return
+        
         for tag in self.edit_area.tag_names():
             self.edit_area.tag_remove(tag, "1.0", "end")
         # Add tags where the search_re function found the pattern
@@ -72,9 +70,9 @@ class IDEFrame(Frame):
             for start, end in self.search_re(pattern, self.edit_area.get('1.0', 'end')):
                 self.edit_area.tag_add(f'{i}', start, end)
                 self.edit_area.tag_config(f'{i}', foreground=color)
-
-                i+=1
-        self.previousText = self.edit_area.get('1.0', 'end')
+                i += 1
+                
+        self.previous_text = self.edit_area.get('1.0', 'end')
     
     def search_re(self, pattern, text, groupid=0):
         matches = []
@@ -82,7 +80,6 @@ class IDEFrame(Frame):
         text = text.splitlines()
         for i, line in enumerate(text):
             for match in re.finditer(pattern, line):
-
                 matches.append(
                     (f"{i + 1}.{match.start()}", f"{i + 1}.{match.end()}")
                 )
