@@ -1,7 +1,9 @@
 %{
   #include<stdio.h>
+  #include <stdlib.h>
   #include<string.h>
   #include<ctype.h>
+  #define YYSTYPE double /* double type for YACC stack */
   char lexema[255];
   void yyerror(char *);
   int yylex();
@@ -51,60 +53,56 @@ var_decl_stmt: DOUBLE var_list
 var_list: VAR
         | var_list COMMA VAR;
 
-assig_stmt: VAR EQUALS exp
+assig_stmt: VAR EQUALS exp { $$ = $3; }
           | array_index EQUALS exp;
 
 input_stmt: INPUT VAR
           | INPUT array_index;
-output_stmt : OUTPUT exp;
-return_stmt : RETURN exp;
+output_stmt: OUTPUT exp { printf("VALOR -> %g\n", $2); };
+return_stmt: RETURN exp;
 
-function_header : INT SUBROUTINE VAR LPAREN arg_list RPAREN
-                | DOUBLE SUBROUTINE VAR LPAREN arg_list RPAREN
-                | INT SUBROUTINE VAR LPAREN RPAREN
-                | DOUBLE SUBROUTINE VAR LPAREN RPAREN;
-function_stmt : function_header stmt_list ENDSUBROUTINE;
+function_header: INT SUBROUTINE VAR LPAREN arg_list RPAREN
+               | DOUBLE SUBROUTINE VAR LPAREN arg_list RPAREN
+               | INT SUBROUTINE VAR LPAREN RPAREN
+               | DOUBLE SUBROUTINE VAR LPAREN RPAREN;
+function_stmt: function_header stmt_list ENDSUBROUTINE;
 exp_fun_call: VAR LPAREN exp RPAREN
             | VAR LPAREN expr_list RPAREN
             | VAR LPAREN RPAREN;
-arg_list : INT VAR
-         | DOUBLE VAR
-         | arg_list COMMA INT VAR
-         | arg_list COMMA DOUBLE VAR;
+arg_list: INT VAR
+        | DOUBLE VAR
+        | arg_list COMMA INT VAR
+        | arg_list COMMA DOUBLE VAR;
 
-expr_list : exp COMMA exp
-          | expr_list COMMA exp;
+expr_list: exp COMMA exp
+         | expr_list COMMA exp;
+
+array_index: VAR LBRACKET INTCONST RBRACKET;
 
 exp: exp EQUALITY term
    | exp NOTEQUALITY term
-   | term;
+   | term { $$ = $1; };
 term: term LESSTHAN exp_arit
     | term GREATERTHAN exp_arit
     | term LESSEQUAL exp_arit
     | term GREATEREQUAL exp_arit
-    | exp_arit;
-exp_arit: exp_arit PLUS term_arit1
-        | exp_arit MINUS term_arit1
-        | term_arit1;
-term_arit1: term_arit1 TIMES term_arit2
-          | term_arit1 DIVIDE term_arit2
-          | term_arit1 PERCENT term_arit2
-          | term_arit2;
-term_arit2: MINUS term_arit2 %prec UMINUS
-          | term_arit3;
-term_arit3: LPAREN exp RPAREN
+    | exp_arit { $$ = $1; };
+exp_arit: exp_arit PLUS term_arit1 { $$ = $1 + $3; }
+        | exp_arit MINUS term_arit1 { $$ = $1 - $3; }
+        | term_arit1 { $$ = $1; };
+term_arit1: term_arit1 TIMES term_arit2 { $$ = $1 * $3; }
+          | term_arit1 DIVIDE term_arit2 { $$ = $1 / $3; }
+          | term_arit1 PERCENT term_arit2 { $$ = (int)$1 % (int)$3; }
+          | term_arit2 { $$ = $1; };
+term_arit2: MINUS term_arit2 %prec UMINUS { $$ = -$2; }
+          | term_arit3 { $$ = $1; };
+term_arit3: LPAREN exp RPAREN { $$ = $2; }
           | INTCONST
           | DOUBLECONST
           | STRINGCONST
           | VAR
           | array_index
           | exp_fun_call;
-
-array_index: VAR LBRACKET INTCONST RBRACKET;
-
-// exp_literal: INTCONST;
-//            | DOUBLECONST;
-//            | STRINGCONST;
 %%
 
 void yyerror(char *msg) {
@@ -134,14 +132,11 @@ int IsReservedWord(char lexema[], int default_token) {
   return default_token;
 }
 
-// Especificamos las reglas de los tokens
 int yylex() {
   char c;
   while(1) {
     c = getchar();
 
-    if(c == '\t') continue;
-    if(c == ' ') continue;
     if(isspace(c)) continue;
 
     if(c == '+') return PLUS;
@@ -164,7 +159,7 @@ int yylex() {
       } while (c == LESS_EQUAL[j] && j < 2);
       if(j == 2) {
         ungetc(c, stdin);
-        lexema[i] = 0;
+        lexema[i] = '\0';
         return LESSEQUAL;
       }
     }
@@ -179,7 +174,7 @@ int yylex() {
       } while (c == GREATER_EQUAL[j] && j < 2);
       if(j == 2) {
         ungetc(c, stdin);
-        lexema[i] = 0;
+        lexema[i] = '\0';
         return GREATEREQUAL;
       }
     }
@@ -194,7 +189,7 @@ int yylex() {
       } while (c == EQUALITYT[j] && j < 2);
       if(j == 2) {
         ungetc(c, stdin);
-        lexema[i] = 0;
+        lexema[i] = '\0';
         return EQUALITY;
       }
     }
@@ -209,7 +204,7 @@ int yylex() {
       } while (c == NOTEQUALITYT[j] && j < 2);
       if(j == 2) {
         ungetc(c, stdin);
-        lexema[i] = 0;
+        lexema[i] = '\0';
         return NOTEQUALITY;
       }
     }
@@ -232,7 +227,7 @@ int yylex() {
         c = getchar();
       }
       ungetc(c, stdin);
-      lexema[i] = 0;
+      lexema[i] = '\0';
       return STRINGCONST;
     }
 
@@ -262,15 +257,18 @@ int yylex() {
             c = getchar();
           } while(isdigit(c));
           ungetc(c, stdin);
-          lexema[i] = 0;
+          lexema[i] = '\0';
+          yylval = atof(lexema);
           return DOUBLECONST;
         }
         ungetc(c, stdin);
-        lexema[i] = 0;
+        lexema[i] = '\0';
+        yylval = atof(lexema);
         return DOUBLECONST;
       }
       ungetc(c, stdin);
-      lexema[i] = 0;
+      lexema[i] = '\0';
+      yylval = atoi(lexema);
       return INTCONST;
     }
 
@@ -279,7 +277,8 @@ int yylex() {
 }
 
 int main() {
-  if(!yyparse()) printf("cadena valida\n");
-  else printf("\ncadena invalida\n");
-  return 0;
+  return yyparse();
+  // if(!yyparse()) printf("cadena valida\n");
+  // else printf("\ncadena invalida\n");
+  // return 0;
 }
