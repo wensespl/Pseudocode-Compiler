@@ -1,0 +1,35 @@
+# declaracion de variables
+ENTERO x, y, z
+DECIMAL arr[3]
+
+x = 12 - 3
+arr[2] = 23.7
+
+ENTERO SUBRUTINA func(ENTERO a, DECIMAL b)
+
+a = 1 * 4 + (4 / 2)
+
+DEVOLVER a + 2
+
+FINSUBRUTINA
+
+y = func(12, 0.5)
+
+SI x <= 0 ENTONCES
+    y = x + 12
+    DEVOLVER y
+SINO
+    z = 2 * x
+    DEVOLVER z
+FINSI
+
+MIENTRAS y <> 100 HACER
+    ENTRADA y
+    SALIDA fibonacci(y)
+FINMIENTRAS
+
+PARA x = 0 HASTA 7
+  y = y + x
+FINPARA
+
+SALIDA "cadena"
