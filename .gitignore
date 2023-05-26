@@ -7,4 +7,7 @@ Lexer.tab.c
 a.out
 a.exe
 
+parser.out
+parsetab.py
+
 .vscode
