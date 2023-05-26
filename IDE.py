@@ -1,7 +1,8 @@
-from tkinter import Tk, StringVar, Text, Menu
+from tkinter import Tk, StringVar, Text, Menu, END
 from tkinter.ttk import Frame, Label, Entry, Button
 from tkinter.scrolledtext import ScrolledText
 from tkinter.messagebox import showwarning
+from tkinter.filedialog import askopenfilename, asksaveasfilename
 import re
 from tkterminal import Terminal
 
@@ -9,19 +10,33 @@ from tkterminal import Terminal
 def rgbToHex(rgb):
     return "#%02x%02x%02x" % rgb
 
-# Define colors for the variouse types of tokens
-normal = rgbToHex((234, 234, 234))
-keywords = rgbToHex((234, 95, 95))
-comments = rgbToHex((95, 234, 165))
-string = rgbToHex((234, 162, 95))
-numbers = rgbToHex((255, 128, 0))
+normal = rgbToHex((213, 206, 217))
+keywords1 = rgbToHex((199, 77, 237))
+keywords2 = rgbToHex((249, 38, 114))
+keywords3 = rgbToHex((238, 93, 67))
+keywords4 = rgbToHex((124, 183, 255))
+keywords5 = rgbToHex((150, 224, 114))
+keywords6 = rgbToHex((255, 0, 170))
+comments = rgbToHex((160, 161, 167))
+string = rgbToHex((255, 230, 109))
+numbers = rgbToHex((243, 156, 18))
+variables = rgbToHex((0, 232, 198))
 function = rgbToHex((95, 211, 234))
-background = rgbToHex((42, 42, 42))
+background1 = rgbToHex((42, 42, 42))
+background2 = rgbToHex((35, 38, 46))
 font = 'Consolas 12'
 
 repl = [
-    ['(^| )(ENTERO|DECIMAL|ENTRADA|SALIDA|SUBRUTINA|FINSUBRUTINA|DEVOLVER|SI|ENTONCES|SINO|FINSI|MIENTRAS|HACER|FINMIENTRAS|PARA|HASTA|FINPARA)($| )', keywords],
+    [r'(\+|-|\*|/|=|%|<|<=|>|>=|==|<>)', keywords3],
     [r'\d+(\.\d*)?', numbers],
+    [r'[a-zA-Z_][a-zA-Z0-9_]*', variables],
+    ['(ENTRADA|SALIDA)', keywords1],
+    ['(ENTERO|DECIMAL)', keywords1],
+    ['(SUBRUTINA|FINSUBRUTINA)', keywords4],
+    ['(DEVOLVER)', keywords6],
+    ['(^| )(SI|ENTONCES|SINO|FINSI)($| )', keywords4],
+    ['(MIENTRAS|HACER|FINMIENTRAS)', keywords4],
+    ['(PARA|HASTA|FINPARA)', keywords4],
     [r'".*?"', string],
     ['#.*?$', comments]
 ]
@@ -31,6 +46,7 @@ class IDEFrame(Frame):
         super().__init__(container)
         self.container = container
         self.previous_text = ''
+        self.actual_filepath = ''
 
         self.__config()
 
@@ -38,41 +54,41 @@ class IDEFrame(Frame):
         self.menu_bar = Menu(self.container)
 
         self.file_bar = Menu(self.menu_bar, tearoff=0)
-        self.file_bar.add_command(label='Open file')
+        self.file_bar.add_command(label='Open file', command=self.open_file)
+        self.file_bar.add_command(label='Save file', command=self.save_file)
+        
         self.menu_bar.add_cascade(label='File', menu=self.file_bar)
 
         self.container.config(menu=self.menu_bar)
 
         self.edit_area = Text(
-            self, background=background, foreground=normal, insertbackground=normal, borderwidth=10, relief='flat', font=font)
+            self, background=background2, foreground=normal, insertbackground=normal, borderwidth=10, relief='flat', font=font)
         self.edit_area.pack(fill='both', expand=1)
         
-        # Bind the KeyRelase to the Changes Function
         self.edit_area.bind('<KeyRelease>', self.changes)
         
-        # Bind Control + R to the exec function
-        # self.bind('<Control-r>', execute)
+        self.edit_area.bind('<Control-s>', self.auto_save_file)
 
-        self.terminal = Terminal(self, borderwidth=10,
-                                 relief='flat', background='Black', foreground='White')
-        self.terminal.shell = True
-        self.terminal.pack(expand=True, fill='both')
+        # self.terminal = Terminal(self, borderwidth=10,
+        #                          relief='flat', background='Black', foreground='White')
+        # self.terminal.shell = True
+        # self.terminal.pack(expand=True, fill='both')
     
     def changes(self, event=None):
-        if self.edit_area.get('1.0', "end") == self.previous_text:
+        if self.edit_area.get(1.0, END) == self.previous_text:
             return
         
         for tag in self.edit_area.tag_names():
-            self.edit_area.tag_remove(tag, "1.0", "end")
+            self.edit_area.tag_remove(tag, 1.0, END)
         # Add tags where the search_re function found the pattern
         i = 0
         for pattern, color in repl:
-            for start, end in self.search_re(pattern, self.edit_area.get('1.0', 'end')):
+            for start, end in self.search_re(pattern, self.edit_area.get(1.0, END)):
                 self.edit_area.tag_add(f'{i}', start, end)
                 self.edit_area.tag_config(f'{i}', foreground=color)
                 i += 1
                 
-        self.previous_text = self.edit_area.get('1.0', 'end')
+        self.previous_text = self.edit_area.get(1.0, END)
     
     def search_re(self, pattern, text, groupid=0):
         matches = []
@@ -85,6 +101,41 @@ class IDEFrame(Frame):
                 )
 
         return matches
+    
+    def open_file(self):
+        filepath = askopenfilename(
+            filetypes=[("Text Files", "*.spl"), ("All Files", "*.*")]
+        )
+        if not filepath:
+            return
+        self.edit_area.delete(1.0, END)
+        with open(filepath, "r") as input_file:
+            text = input_file.read()
+            self.edit_area.insert(END, text)
+        self.changes()
+        self.container.title(f"Spanish Pseudocode Compiler - {filepath}")
+        self.actual_filepath = filepath
+    
+    def save_file(self):
+        filepath = asksaveasfilename(
+            defaultextension="spl",
+            filetypes=[("Text Files", "*.spl"), ("All Files", "*.*")],
+        )
+        if not filepath:
+            return
+        with open(filepath, "w") as output_file:
+            text = self.edit_area.get(1.0, END)
+            output_file.write(text)
+        self.container.title(f"Spanish Pseudocode Compiler - {filepath}")
+        self.actual_filepath = filepath
+    
+    def auto_save_file(self):
+        if not self.actual_filepath:
+            self.save_file()
+            return
+        with open(self.actual_filepath, "w") as output_file:
+            text = self.edit_area.get(1.0, END)
+            output_file.write(text)
 
 
 class App(Tk):
@@ -97,7 +148,7 @@ class App(Tk):
         self.IDE_frame.pack(fill='both', expand=1, padx=5, pady=5)
 
     def __config(self):
-        self.title("Spanish Pseudocode Compiler (IDE)")
+        self.title("Spanish Pseudocode Compiler")
 
         window_width = 1000
         window_height = 800
