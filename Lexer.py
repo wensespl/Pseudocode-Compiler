@@ -3,14 +3,21 @@ from ply import lex
 
 class Lexer(object):
 
-    def build(self, **kwargs):
-        self.lexer = lex.lex(module=self, **kwargs)
-
-    def test(self, text):
+    def build(self):
+        self.lexer = lex.lex(object=self)
+        
+    def input(self, text):
         self.lexer.input(text)
+        
+    def token(self):
+        self.last_token = self.lexer.token()
+        return self.last_token
+    
+    def test(self, text):
+        self.input(text)
         while True:
             tok = self.lexer.token()
-            if not tok:
+            if not tok: 
                 break
             print(tok)
 
@@ -53,7 +60,7 @@ class Lexer(object):
         'SUBROUTINE','ENDSUBROUTINE','RETURN',
         'IF','THEN','ELSE','ENDIF',
         'WHILE','DO','ENDWHILE',
-        'FOR','TO' 'ENDFOR',
+        'FOR','TO','ENDFOR',
         'INT_CONST','DOUBLE_CONST','STRING_CONST',
         'PLUS','MINUS','TIMES','DIVIDE','EQUALS','PERCENT',
         'COMMA','NEWLINE',
@@ -146,17 +153,17 @@ class Lexer(object):
 
 
 if __name__ == "__main__":
-    input_file = open("code.SPL")
+    input_file = open(".\examples\code.spl")
     lines = [line.lstrip()
              for i, line in enumerate(input_file) if line.strip()]
     lines[-1] = lines[-1].rstrip()
     input_file.close()
 
     text = ''.join(lines)
-    print("Codigo de entrada\n")
-    print(text)
+    # print("Codigo de entrada\n")
+    # print(text)
 
-    print("Tokens de salida\n")
+    # print("Tokens de salida\n")
     lexer = Lexer()
     lexer.build()
     lexer.test(text)
