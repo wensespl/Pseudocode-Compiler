@@ -1,0 +1,74 @@
+# Variables y constantes
+
+num var1 var2
+
+23 45.25
+0.253
+5.
+-3 -4. -5.1
+""   "strings"
+
+# Arrays
+
+ENTERO arr[3]
+arr[1] = 12
+
+# Asignacion
+
+arr[2] = 10
+num = 34
+var1 = 15
+
+# Opedarores
+
++ - * / = %
+< <= > >= == <>
+()[] ,
+
+# Caracteres ignorados
+
+         # Espacios
+         # Tabulaciones
+# Comentarios
+
+# Palabras reservadas
+
+ENTERO x
+DECIMAL f
+
+# Input y output
+ENTRADA entrada
+SALIDA "salida" 123 x[4] funcion()
+
+# Subrutinas
+
+ENTERO SUBRUTINA nombrefuncion(ENTERO x, ENTERO y)
+    DEVOLVER x + y
+FINSUBRUTINA
+
+# Condicionales
+
+SI x <= 0 ENTONCES
+    DEVOLVER 0
+SINO SI x == 1 ENTONCES
+    DEVOLVER 0
+SINO SI x == 2 ENTONCES
+    DEVOLVER 1
+SINO
+    DEVOLVER add(fibonacci(x - 2), fibonacci(x - 1))
+FINSI
+
+# Bucles while y for
+
+MIENTRAS y <> 100 HACER
+    ENTRADA y
+    SALIDA fibonacci(y)
+FINMIENTRAS
+
+PARA x = 0 HASTA 7
+  y = y + x
+FINPARA
+
+# Caracteres ilegales
+
+$ ! @ ^ & {} : ; ? .
