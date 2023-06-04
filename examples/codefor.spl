@@ -1,0 +1,3 @@
+PARA i = 0 HASTA 3
+    SALIDA i
+FINPARA
