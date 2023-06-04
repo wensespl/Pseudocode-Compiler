@@ -6,7 +6,7 @@ if __name__ == "__main__":
     output = "output.ll"
     
     input_file = open(filename)
-    lines = [line.lstrip() for i, line in enumerate(input_file) if line.strip()]
+    lines = [line.lstrip() for _, line in enumerate(input_file) if line.strip()]
     lines[-1] = lines[-1].rstrip()
     input_file.close()
 
