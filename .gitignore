@@ -3,12 +3,14 @@ Lib
 Scripts
 pyvenv.cfg
 
-Lexer.tab.c
+PseudocodeCompiler.tab.c
+PseudocodeCompiler.output
 a.out
 a.exe
 
 parser.out
 parsetab.py
+output.ll
 
 .vscode
 __pycache__
