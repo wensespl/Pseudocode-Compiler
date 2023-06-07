@@ -100,9 +100,9 @@ class Parser:
         '''array_decl_stmt : DOUBLE array_index
                            | INT array_index'''
 
-        if p[1] == 'DOUBLE':
+        if p[1] == 'DECIMAL':
             dType = float
-        elif p[1] == 'INT':
+        elif p[1] == 'ENTERO':
             dType = int
 
         name = p[2].name
@@ -170,10 +170,10 @@ class Parser:
                            | INT SUBROUTINE VAR LPAREN RPAREN
                            | DOUBLE SUBROUTINE VAR LPAREN RPAREN'''
              
-        if p[1] == 'INT':
+        if p[1] == 'ENTERO':
             dType = int
             
-        elif p[1] == 'DOUBLE':
+        elif p[1] == 'DECIMAL':
             dType = float
         
         name = p[3]
@@ -211,10 +211,10 @@ class Parser:
                     | arg_list COMMA DOUBLE VAR'''
         
                     
-        if p[len(p) - 2] == 'INT':
+        if p[len(p) - 2] == 'ENTERO':
             dType = int
             
-        elif p[len(p) - 2] == 'DOUBLE':
+        elif p[len(p) - 2] == 'DECIMAL':
             dType = float
         
         if len(p) == 3:
