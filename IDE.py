@@ -1,10 +1,12 @@
-from tkinter import Tk, StringVar, Text, Menu, END
-from tkinter.ttk import Frame, Label, Entry, Button
-from tkinter.scrolledtext import ScrolledText
+from tkinter import Tk, Text, Menu, END
+from tkinter.ttk import Frame
 from tkinter.messagebox import showwarning
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 import re
 from tkterminal import Terminal
+
+from Parser import Parser
+from IRGenerator import Generator
 
 
 def rgbToHex(rgb):
@@ -34,7 +36,7 @@ repl = [
     ['(ENTERO|DECIMAL)', keywords1],
     ['(SUBRUTINA|FINSUBRUTINA)', keywords4],
     ['(DEVOLVER)', keywords6],
-    ['(^| )(SI|ENTONCES|SINO|FINSI)($| )', keywords4],
+    ['(^| )(ENTONCES|SINO|SI|FINSI)($| )', keywords4],
     ['(MIENTRAS|HACER|FINMIENTRAS)', keywords4],
     ['(PARA|HASTA|FINPARA)', keywords4],
     [r'".*?"', string],
@@ -57,7 +59,13 @@ class IDEFrame(Frame):
         self.file_bar.add_command(label='Open file', command=self.open_file)
         self.file_bar.add_command(label='Save file', command=self.save_file)
         
-        self.menu_bar.add_cascade(label='File', menu=self.file_bar)
+        self.menu_bar.add_cascade(label='Archivo', menu=self.file_bar)
+        
+        self.compiler_bar = Menu(self.menu_bar, tearoff=0)
+        self.compiler_bar.add_command(label='Ejecutar', command=self.execute)
+        self.compiler_bar.add_command(label='Compilar', command=self.compile)
+        
+        self.menu_bar.add_cascade(label='Compilar', menu=self.compiler_bar)
 
         self.container.config(menu=self.menu_bar)
 
@@ -69,10 +77,43 @@ class IDEFrame(Frame):
         
         self.edit_area.bind('<Control-s>', self.auto_save_file)
 
-        # self.terminal = Terminal(self, borderwidth=10,
-        #                          relief='flat', background='Black', foreground='White')
-        # self.terminal.shell = True
-        # self.terminal.pack(expand=True, fill='both')
+        self.terminal = Terminal(self, borderwidth=10,
+                                 relief='flat', background='Black', foreground='White')
+        self.terminal.shell = True
+        self.terminal.pack(expand=True, fill='both')
+    
+    def gen_outputll(self):
+        filename = self.actual_filepath
+        output = "output.ll"
+        
+        input_file = open(filename)
+        lines = [line.lstrip() for _, line in enumerate(input_file) if line.strip()]
+        lines[-1] = lines[-1].rstrip()
+        input_file.close()
+
+        text = ''.join(lines)
+        
+        ast = Parser().parse(text)
+            
+        ir = Generator().generate(ast, output)
+        
+        output_file = open(output,"w+")
+        output_file.write(str(ir))
+        output_file.close()
+    
+    def execute(self):
+        if not self.actual_filepath:
+            showwarning("Warning", "Debe tener un archivo activo")
+            return
+        self.gen_outputll()
+        self.terminal.run_command('tools\lli.exe output.ll')
+    
+    def compile(self):
+        if not self.actual_filepath:
+            showwarning("Warning", "Debe tener un archivo activo")
+            return
+        self.gen_outputll()
+        self.terminal.run_command('clang output.ll')
     
     def changes(self, event=None):
         if self.edit_area.get(1.0, END) == self.previous_text:
@@ -80,7 +121,7 @@ class IDEFrame(Frame):
         
         for tag in self.edit_area.tag_names():
             self.edit_area.tag_remove(tag, 1.0, END)
-        # Add tags where the search_re function found the pattern
+        
         i = 0
         for pattern, color in repl:
             for start, end in self.search_re(pattern, self.edit_area.get(1.0, END)):
@@ -129,7 +170,7 @@ class IDEFrame(Frame):
         self.container.title(f"Spanish Pseudocode Compiler - {filepath}")
         self.actual_filepath = filepath
     
-    def auto_save_file(self):
+    def auto_save_file(self, event=None):
         if not self.actual_filepath:
             self.save_file()
             return

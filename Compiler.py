@@ -2,7 +2,7 @@ from Parser import Parser
 from IRGenerator import Generator
 
 if __name__ == "__main__":
-    filename = "./examples/codefor.spl"
+    filename = "./examples/fibonacciRecursivo.spl"
     output = "output.ll"
     
     input_file = open(filename)
