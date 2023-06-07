@@ -1,0 +1,24 @@
+ENTERO SUBRUTINA sumar(ENTERO x, ENTERO y)
+    DEVOLVER x + y
+FINSUBRUTINA
+
+ENTERO SUBRUTINA fibonacci(ENTERO x)
+    SI x <= 0 ENTONCES
+        DEVOLVER 0
+    SINO SI x == 1 ENTONCES
+        DEVOLVER 0
+    SINO SI x == 2 ENTONCES
+        DEVOLVER 1
+    SINO
+        DEVOLVER sumar(fibonacci(x - 2), fibonacci(x - 1))
+    FINSI
+FINSUBRUTINA
+
+y = 0
+
+PARA i = 0 HASTA 10
+    ENTRADA y
+    SALIDA fibonacci(y)
+FINPARA
+
+

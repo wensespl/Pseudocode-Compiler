@@ -1,0 +1,4 @@
+x = "Hola"
+y = "Mundo"
+
+SALIDA x + " " + y
