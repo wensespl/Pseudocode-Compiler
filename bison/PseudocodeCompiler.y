@@ -5,7 +5,16 @@
   #include<ctype.h>
   #define YYSTYPE double /* double type for YACC stack */
   char lexema[255];
-  void yyerror(char *);
+  void yyerror(char *msg);
+  typedef struct {
+	char nombre[60];
+	double valor;
+	int token;
+	} tipoTS;
+  tipoTS TablaSim[100];
+  int nSim = 0;
+  int localizaSimb(char *, int);
+  void imprimeTablaSim();
   int yylex();
   int IsReservedWord(char[], int);
 %}
@@ -53,12 +62,12 @@ var_decl_stmt: DOUBLE var_list
 var_list: VAR
         | var_list COMMA VAR;
 
-assig_stmt: VAR EQUALS exp { $$ = $3; }
+assig_stmt: VAR { localizaSimb(lexema, VAR); } EQUALS exp { $$ = $3; }
           | array_index EQUALS exp;
 
 input_stmt: INPUT VAR
           | INPUT array_index;
-output_stmt: OUTPUT exp { printf("VALOR -> %g\n", $2); };
+output_stmt: OUTPUT exp { printf("%g\n", $2); };
 return_stmt: RETURN exp;
 
 function_header: INT SUBROUTINE VAR LPAREN arg_list RPAREN
@@ -97,13 +106,34 @@ term_arit1: term_arit1 TIMES term_arit2 { $$ = $1 * $3; }
 term_arit2: MINUS term_arit2 %prec UMINUS { $$ = -$2; }
           | term_arit3 { $$ = $1; };
 term_arit3: LPAREN exp RPAREN { $$ = $2; }
-          | INTCONST
+          | INTCONST { $$ = TablaSim[localizaSimb(lexema, INTCONST)].valor; }
           | DOUBLECONST
           | STRINGCONST
-          | VAR
+          | VAR { $$ = TablaSim[localizaSimb(lexema, VAR)].valor; }
           | array_index
           | exp_fun_call;
 %%
+
+int localizaSimb(char *nom, int tok) {
+	int i;
+	for(i = 0; i < nSim; i++) {
+		if(!strcasecmp(TablaSim[i].nombre, nom)) 
+			return i;
+	}
+	strcpy(TablaSim[nSim].nombre, nom);
+	TablaSim[nSim].token = tok;
+	if(tok == VAR) TablaSim[nSim].valor = 0.0;
+	if(tok == INTCONST) sscanf(nom, "%lf", &TablaSim[nSim].valor);
+	nSim++;
+	return nSim - 1;
+}
+
+void imprimeTablaSim(){
+	int i;
+	for(i = 0; i < nSim; i++) {
+		printf("%d  nombre=%s tok=%d valor=%lf\n", i, TablaSim[i].nombre, TablaSim[i].token, TablaSim[i].valor);
+	}
+}
 
 void yyerror(char *msg) {
   printf("error: %s", msg);
@@ -277,8 +307,10 @@ int yylex() {
 }
 
 int main() {
-  return yyparse();
-  // if(!yyparse()) printf("cadena valida\n");
-  // else printf("\ncadena invalida\n");
-  // return 0;
+  // return yyparse();
+  if(!yyparse()) printf("cadena valida\n");
+  else printf("cadena invalida\n");
+  printf("tabla de simbolos\n");
+	imprimeTablaSim();
+  return 0;
 }
