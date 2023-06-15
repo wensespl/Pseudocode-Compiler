@@ -1,20 +1,37 @@
 %{
-  #include<stdio.h>
+  #include <stdio.h>
   #include <stdlib.h>
-  #include<string.h>
-  #include<ctype.h>
+  #include <string.h>
+  #include <ctype.h>
   #define YYSTYPE double /* double type for YACC stack */
   char lexema[255];
   void yyerror(char *msg);
+
   typedef struct {
-	char nombre[60];
-	double valor;
-	int token;
+    char nombre[60];
+    double valor;
+    int token;
 	} tipoTS;
   tipoTS TablaSim[100];
   int nSim = 0;
+
+  typedef struct {
+    int op;
+    int a1;
+    int a2;
+    int a3;
+  } tipoCodigo;
+  int cx = -1;
+  tipoCodigo TCodigo[100];
+  void generaCodigo(int, int, int, int);
+
   int localizaSimb(char *, int);
   void imprimeTablaSim();
+
+  void imprimeTablaCod();
+  int nVarTemp = 0;
+  int GenVarTemp();
+
   int yylex();
   int IsReservedWord(char[], int);
 %}
@@ -29,6 +46,7 @@
 %token IF THEN ELSE ENDIF
 %token WHILE DO ENDWHILE
 %token FOR TO ENDFOR
+%token ASIGNAR SUMAR RESTAR MULTIPLICAR DIVIDIR PORCENTAJE PARENTESIS
 
 %start stmt_list
 
@@ -48,26 +66,27 @@ simple_stmt: assig_stmt
            | return_stmt;
 
 if_stmt: IF exp THEN stmt_list ENDIF
-       | IF exp THEN stmt_list ELSE stmt_list ENDIF;
+       | IF exp THEN stmt_list ELSE stmt_list ENDIF
+       | IF exp THEN stmt_list ELSE if_stmt;
 
 while_stmt: WHILE exp DO stmt_list ENDWHILE;
 
-for_stmt: FOR assig_stmt TO INTCONST stmt_list ENDFOR;
+for_stmt: FOR assig_stmt TO INTCONST { $$ = localizaSimb(lexema, INTCONST); } stmt_list ENDFOR;
 
 array_decl_stmt: DOUBLE array_index
                | INT array_index;
 
 var_decl_stmt: DOUBLE var_list
              | INT var_list;
-var_list: VAR
-        | var_list COMMA VAR;
+var_list: VAR { $$ = localizaSimb(lexema, VAR); }
+        | var_list COMMA VAR { $$ = localizaSimb(lexema, VAR); };
 
-assig_stmt: VAR { localizaSimb(lexema, VAR); } EQUALS exp { $$ = $3; }
+assig_stmt: VAR { $$ = localizaSimb(lexema, VAR); } EQUALS exp { generaCodigo(ASIGNAR, $2, $4, '-'); }
           | array_index EQUALS exp;
 
-input_stmt: INPUT VAR
+input_stmt: INPUT VAR { $$ = localizaSimb(lexema, VAR); }
           | INPUT array_index;
-output_stmt: OUTPUT exp { printf("%g\n", $2); };
+output_stmt: OUTPUT exp;
 return_stmt: RETURN exp;
 
 function_header: INT SUBROUTINE VAR LPAREN arg_list RPAREN
@@ -90,29 +109,67 @@ array_index: VAR LBRACKET INTCONST RBRACKET;
 
 exp: exp EQUALITY term
    | exp NOTEQUALITY term
-   | term { $$ = $1; };
+   | term;
 term: term LESSTHAN exp_arit
     | term GREATERTHAN exp_arit
     | term LESSEQUAL exp_arit
     | term GREATEREQUAL exp_arit
-    | exp_arit { $$ = $1; };
-exp_arit: exp_arit PLUS term_arit1 { $$ = $1 + $3; }
-        | exp_arit MINUS term_arit1 { $$ = $1 - $3; }
-        | term_arit1 { $$ = $1; };
-term_arit1: term_arit1 TIMES term_arit2 { $$ = $1 * $3; }
-          | term_arit1 DIVIDE term_arit2 { $$ = $1 / $3; }
-          | term_arit1 PERCENT term_arit2 { $$ = (int)$1 % (int)$3; }
-          | term_arit2 { $$ = $1; };
+    | exp_arit;
+exp_arit: exp_arit PLUS term_arit1 {
+                                      int i = GenVarTemp(); 
+                                      generaCodigo(SUMAR, i, $1, $3); 
+                                      $$ = i;
+                                   }
+        | exp_arit MINUS term_arit1 {
+                                      int i = GenVarTemp(); 
+                                      generaCodigo(RESTAR, i, $1, $3); 
+                                      $$ = i;
+                                    }
+        | term_arit1;
+term_arit1: term_arit1 TIMES term_arit2 {
+                                          int i = GenVarTemp(); 
+                                          generaCodigo(MULTIPLICAR, i, $1, $3); 
+                                          $$ = i;
+                                        }
+          | term_arit1 DIVIDE term_arit2 {
+                                            int i = GenVarTemp(); 
+                                            generaCodigo(DIVIDIR, i, $1, $3); 
+                                            $$ = i;
+                                         }
+          | term_arit1 PERCENT term_arit2 {
+                                            int i = GenVarTemp(); 
+                                            generaCodigo(PORCENTAJE, i, $1, $3); 
+                                            $$ = i;
+                                         }
+          | term_arit2;
 term_arit2: MINUS term_arit2 %prec UMINUS { $$ = -$2; }
-          | term_arit3 { $$ = $1; };
-term_arit3: LPAREN exp RPAREN { $$ = $2; }
-          | INTCONST { $$ = TablaSim[localizaSimb(lexema, INTCONST)].valor; }
-          | DOUBLECONST
+          | term_arit3;
+term_arit3: LPAREN exp RPAREN {
+                                int i = GenVarTemp(); 
+                                generaCodigo(PARENTESIS, i, $2, '-'); 
+                                $$ = i;
+                              }
+          | INTCONST { $$ = localizaSimb(lexema, INTCONST); }
+          | DOUBLECONST { $$ = localizaSimb(lexema, DOUBLECONST); }
           | STRINGCONST
-          | VAR { $$ = TablaSim[localizaSimb(lexema, VAR)].valor; }
+          | VAR { $$ = localizaSimb(lexema, VAR); }
           | array_index
           | exp_fun_call;
 %%
+
+int GenVarTemp(){
+	char t[60];
+	sprintf(t, "_T%d", nVarTemp++);
+	return localizaSimb(t, VAR);
+}
+
+void generaCodigo(int op, int a1, int a2, int a3){
+	cx++;	
+	TCodigo[cx].op = op;
+	TCodigo[cx].a1 = a1;
+	TCodigo[cx].a2 = a2;
+	TCodigo[cx].a3 = a3;
+}
 
 int localizaSimb(char *nom, int tok) {
 	int i;
@@ -124,6 +181,7 @@ int localizaSimb(char *nom, int tok) {
 	TablaSim[nSim].token = tok;
 	if(tok == VAR) TablaSim[nSim].valor = 0.0;
 	if(tok == INTCONST) sscanf(nom, "%lf", &TablaSim[nSim].valor);
+  if(tok == DOUBLECONST) sscanf(nom, "%lf", &TablaSim[nSim].valor);
 	nSim++;
 	return nSim - 1;
 }
@@ -132,6 +190,13 @@ void imprimeTablaSim(){
 	int i;
 	for(i = 0; i < nSim; i++) {
 		printf("%d  nombre=%s tok=%d valor=%lf\n", i, TablaSim[i].nombre, TablaSim[i].token, TablaSim[i].valor);
+	}
+}
+
+void imprimeTablaCod(){
+	int i;
+	for(i = 0; i <= cx; i++){
+		printf("op=%d  a1=%d a2=%d a3=%d\n", TCodigo[i].op, TCodigo[i].a1, TCodigo[i].a2, TCodigo[i].a3);
 	}
 }
 
@@ -167,7 +232,10 @@ int yylex() {
   while(1) {
     c = getchar();
 
-    if(isspace(c)) continue;
+    if(c == ' ') continue;
+		if(c == '\t') continue;
+		if(c == '\n') continue;
+    // if(isspace(c)) continue;
 
     if(c == '+') return PLUS;
     if(c == '-') return MINUS;
@@ -312,5 +380,7 @@ int main() {
   else printf("cadena invalida\n");
   printf("tabla de simbolos\n");
 	imprimeTablaSim();
+  printf("tabla de codigos\n");
+	imprimeTablaCod();
   return 0;
 }

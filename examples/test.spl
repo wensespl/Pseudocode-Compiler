@@ -1,7 +1,8 @@
-x = 2
+x = 2.5
 y = 3 + 4
 
 SALIDA x + y / 2 * 3
 SALIDA z * 2 / 7 - 6 + 4
 
 z = x * 3 / y + 45
+

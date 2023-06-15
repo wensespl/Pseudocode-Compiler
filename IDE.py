@@ -1,8 +1,11 @@
-from tkinter import Tk, Text, Menu, END
+from tkinter import Tk, Text, Menu, Toplevel, END
 from tkinter.ttk import Frame
 from tkinter.messagebox import showwarning
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 import re
+import subprocess
+import os
+import shlex
 from tkterminal import Terminal
 
 from Parser import Parser
@@ -66,6 +69,11 @@ class IDEFrame(Frame):
         self.compiler_bar.add_command(label='Compilar', command=self.compile)
         
         self.menu_bar.add_cascade(label='Compilar', menu=self.compiler_bar)
+        
+        self.bison_bar = Menu(self.menu_bar, tearoff=0)
+        self.bison_bar.add_command(label='Ejecutar', command=self.run_bison)
+        
+        self.menu_bar.add_cascade(label='Bison', menu=self.bison_bar)
 
         self.container.config(menu=self.menu_bar)
 
@@ -114,6 +122,17 @@ class IDEFrame(Frame):
             return
         self.gen_outputll()
         self.terminal.run_command('clang output.ll')
+    
+    def run_bison(self):
+        if not self.actual_filepath:
+            showwarning("Warning", "Debe tener un archivo activo")
+            return
+        # self.bison_window = Toplevel(self.container)
+        pathexe = os.path.abspath("project_bison\\a.exe")
+        pathfile = self.actual_filepath
+        # pathfile = os.path.abspath("examples\\test.spl")
+        out = subprocess.run([pathexe, '<', pathfile], shell=True, capture_output=True)
+        print(out.stdout.decode("utf-8"))
     
     def changes(self, event=None):
         if self.edit_area.get(1.0, END) == self.previous_text:
