@@ -2,11 +2,9 @@ from tkinter import Tk, Text, Menu, Toplevel, END
 from tkinter.ttk import Frame
 from tkinter.messagebox import showwarning
 from tkinter.filedialog import askopenfilename, asksaveasfilename
-import re
-import subprocess
-import os
-import shlex
+from pathlib import Path
 from tkterminal import Terminal
+import re, subprocess
 
 from Parser import Parser
 from IRGenerator import Generator
@@ -146,11 +144,12 @@ class IDEFrame(Frame):
             self.bison_window, borderwidth=10, relief='flat')
         edit_area.pack(fill='both', expand=1)
         
-        pathexe = os.path.abspath("project_bison\\a.exe")
+        pathexe = Path("project_bison/a.exe")
+        # pathexe = os.path.abspath("project_bison\\a.exe")
         pathfile = self.actual_filepath
         
         output = subprocess.run([pathexe, '<', pathfile], shell=True, capture_output=True)
-        
+        print(output)
         edit_area.insert(1.0, output.stdout.decode("utf-8"))
        
     
