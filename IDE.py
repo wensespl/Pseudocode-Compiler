@@ -127,12 +127,32 @@ class IDEFrame(Frame):
         if not self.actual_filepath:
             showwarning("Warning", "Debe tener un archivo activo")
             return
-        # self.bison_window = Toplevel(self.container)
+        
+        self.bison_window = Toplevel(self.container)
+        
+        window_width = 800
+        window_height = 800
+
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+
+        center_x = int(screen_width/2 - window_width/2)
+        center_y = int(screen_height/2 - window_height/2)
+
+        self.bison_window.geometry(f"{window_width}x{window_height}+{center_x}+{center_y}")
+        self.bison_window.resizable(True, True)
+        
+        edit_area = Text(
+            self.bison_window, borderwidth=10, relief='flat')
+        edit_area.pack(fill='both', expand=1)
+        
         pathexe = os.path.abspath("project_bison\\a.exe")
         pathfile = self.actual_filepath
-        # pathfile = os.path.abspath("examples\\test.spl")
-        out = subprocess.run([pathexe, '<', pathfile], shell=True, capture_output=True)
-        print(out.stdout.decode("utf-8"))
+        
+        output = subprocess.run([pathexe, '<', pathfile], shell=True, capture_output=True)
+        
+        edit_area.insert(1.0, output.stdout.decode("utf-8"))
+       
     
     def changes(self, event=None):
         if self.edit_area.get(1.0, END) == self.previous_text:
