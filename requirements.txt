@@ -1,2 +1,3 @@
+llvmlite==0.40.0
 ply==3.11
 tkterminal==0.1.0
