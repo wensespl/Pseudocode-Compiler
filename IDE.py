@@ -149,7 +149,7 @@ class IDEFrame(Frame):
         pathfile = self.actual_filepath
         
         output = subprocess.run([pathexe, '<', pathfile], shell=True, capture_output=True)
-        print(output)
+        
         edit_area.insert(1.0, output.stdout.decode("utf-8"))
        
     
