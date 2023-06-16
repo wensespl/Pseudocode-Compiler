@@ -189,14 +189,14 @@ int localizaSimb(char *nom, int tok) {
 void imprimeTablaSim(){
 	int i;
 	for(i = 0; i < nSim; i++) {
-		printf("%d  nombre=%s tok=%d valor=%lf\n", i, TablaSim[i].nombre, TablaSim[i].token, TablaSim[i].valor);
+		printf("%4d  nombre=%6s tok=%5d valor=%4.3lf\n", i, TablaSim[i].nombre, TablaSim[i].token, TablaSim[i].valor);
 	}
 }
 
 void imprimeTablaCod(){
 	int i;
 	for(i = 0; i <= cx; i++){
-		printf("op=%d  a1=%d a2=%d a3=%d\n", TCodigo[i].op, TCodigo[i].a1, TCodigo[i].a2, TCodigo[i].a3);
+		printf("op=%5d  a1=%4d a2=%4d a3=%4d\n", TCodigo[i].op, TCodigo[i].a1, TCodigo[i].a2, TCodigo[i].a3);
 	}
 }
 
