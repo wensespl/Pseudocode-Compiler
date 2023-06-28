@@ -1,9 +1,9 @@
 ENTERO SUBRUTINA busquedaLineal(ENTERO objetivo)
     ENTERO arr[4]
-    arr[0] = 1
-    arr[1] = 2
-    arr[2] = 3
-    arr[3] = 4
+    arr[0] = 5
+    arr[1] = 7
+    arr[2] = 9
+    arr[3] = 1
 
     PARA i = 0 HASTA 4
       SI arr[i] == objetivo ENTONCES
@@ -14,8 +14,9 @@ ENTERO SUBRUTINA busquedaLineal(ENTERO objetivo)
     DEVOLVER -1
 FINSUBRUTINA
 
-resultado = busquedaLineal(3)
+resultado = busquedaLineal(1)
 
 SALIDA resultado
+
 
 

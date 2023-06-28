@@ -1,0 +1,40 @@
+n = 7
+ENTERO x[n]
+x[0] = 5
+x[1] = 11
+x[2] = 3
+x[3] = 23
+x[4] = 78
+x[5] = -5
+x[6] = 2
+
+i = 0
+j = 0
+min = 0
+
+MIENTRAS i < n HACER
+    j = i
+    min = j
+    MIENTRAS j < n HACER 
+        SI x[j] < x[min] ENTONCES
+            min = j
+        FINSI
+        j = j + 1
+    FINMIENTRAS
+    
+    temp = x[i]
+    temp2 = x[min]
+    
+    x[min] = temp
+    x[i] = temp2
+    
+    i = i + 1
+FINMIENTRAS
+
+SALIDA "Array ordenado:"
+
+i = 0
+MIENTRAS i < n HACER
+    SALIDA x[i]
+    i = i + 1
+FINMIENTRAS

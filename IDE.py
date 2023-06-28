@@ -144,7 +144,7 @@ class IDEFrame(Frame):
             self.bison_window, borderwidth=10, relief='flat')
         edit_area.pack(fill='both', expand=1)
         
-        pathexe = Path("project_bison/PseudocodeCompilerBISON.exe")
+        pathexe = Path("project_bison/SPL.exe")
         pathfile = self.actual_filepath
         
         output = subprocess.run([pathexe, '<', pathfile], shell=True, capture_output=True)

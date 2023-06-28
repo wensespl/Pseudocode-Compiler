@@ -14,11 +14,9 @@ ENTERO SUBRUTINA fibonacci(ENTERO x)
     FINSI
 FINSUBRUTINA
 
-y = 0
-
-PARA i = 0 HASTA 10
-    ENTRADA y
-    SALIDA fibonacci(y)
+PARA i = 0 HASTA 15
+    SALIDA fibonacci(i)
 FINPARA
+
 
 

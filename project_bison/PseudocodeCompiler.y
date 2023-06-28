@@ -31,6 +31,9 @@
   void imprimeTablaCod();
   int nVarTemp = 0;
   int GenVarTemp();
+  void interpretaCodigo();
+
+  int bucleW, bucleF;
 
   int yylex();
   int IsReservedWord(char[], int);
@@ -47,6 +50,8 @@
 %token WHILE DO ENDWHILE
 %token FOR TO ENDFOR
 %token ASIGNAR SUMAR RESTAR MULTIPLICAR DIVIDIR PORCENTAJE PARENTESIS
+%token SALTARF1 SALTARF2 BUCLE
+%token MAYOR MENOR IGUAL MAYOR_IGUAL MENOR_IGUAL DESIGUAL
 
 %start stmt_list
 
@@ -65,11 +70,10 @@ simple_stmt: assig_stmt
            | function_stmt
            | return_stmt;
 
-if_stmt: IF exp THEN stmt_list ENDIF
-       | IF exp THEN stmt_list ELSE stmt_list ENDIF
-       | IF exp THEN stmt_list ELSE if_stmt;
+if_stmt: IF cond {generaCodigo(SALTARF1,$2,'?','-');$$=cx;} THEN stmt_list{TCodigo[0].a2=cx+1;} ENDIF;
+      //  | IF exp { generaCodigo(SALTARF1, $2, '?', '-'); $$ = cx; } THEN stmt_list { generaCodigo(SALTARF2,'?','-','-'); $$ = cx; } { TCodigo[cx].a2 = cx + 1; } ELSE stmt_list { TCodigo[cx].a1 = cx + 1; } ENDIF;
 
-while_stmt: WHILE exp DO stmt_list ENDWHILE;
+while_stmt: WHILE cond DO stmt_list ENDWHILE;
 
 for_stmt: FOR assig_stmt TO INTCONST { $$ = localizaSimb(lexema, INTCONST); } stmt_list ENDFOR;
 
@@ -81,20 +85,20 @@ var_decl_stmt: DOUBLE var_list
 var_list: VAR { $$ = localizaSimb(lexema, VAR); }
         | var_list COMMA VAR { $$ = localizaSimb(lexema, VAR); };
 
-assig_stmt: VAR { $$ = localizaSimb(lexema, VAR); } EQUALS exp { generaCodigo(ASIGNAR, $2, $4, '-'); }
-          | array_index EQUALS exp;
+assig_stmt: VAR { $$ = localizaSimb(lexema, VAR); } EQUALS exp_arit { generaCodigo(ASIGNAR, $2, $4, '-'); }
+          | array_index EQUALS exp_arit;
 
 input_stmt: INPUT VAR { $$ = localizaSimb(lexema, VAR); }
           | INPUT array_index;
-output_stmt: OUTPUT exp;
-return_stmt: RETURN exp;
+output_stmt: OUTPUT exp_arit;
+return_stmt: RETURN exp_arit;
 
 function_header: INT SUBROUTINE VAR LPAREN arg_list RPAREN
                | DOUBLE SUBROUTINE VAR LPAREN arg_list RPAREN
                | INT SUBROUTINE VAR LPAREN RPAREN
                | DOUBLE SUBROUTINE VAR LPAREN RPAREN;
 function_stmt: function_header stmt_list ENDSUBROUTINE;
-exp_fun_call: VAR LPAREN exp RPAREN
+exp_fun_call: VAR LPAREN exp_arit RPAREN
             | VAR LPAREN expr_list RPAREN
             | VAR LPAREN RPAREN;
 arg_list: INT VAR
@@ -102,19 +106,44 @@ arg_list: INT VAR
         | arg_list COMMA INT VAR
         | arg_list COMMA DOUBLE VAR;
 
-expr_list: exp COMMA exp
-         | expr_list COMMA exp;
+expr_list: exp_arit COMMA exp_arit
+         | expr_list COMMA exp_arit;
 
 array_index: VAR LBRACKET INTCONST RBRACKET;
 
-exp: exp EQUALITY term
-   | exp NOTEQUALITY term
-   | term;
-term: term LESSTHAN exp_arit
-    | term GREATERTHAN exp_arit
-    | term LESSEQUAL exp_arit
-    | term GREATEREQUAL exp_arit
+cond: exp_arit EQUALITY exp_arit { 
+                         int i = GenVarTemp(); 
+                         generaCodigo(IGUAL, i, $1, $3); 
+                         $$ = i;
+                       }
+   | exp_arit NOTEQUALITY exp_arit { 
+                            int i = GenVarTemp(); 
+                            generaCodigo(DESIGUAL, i, $1, $3); 
+                            $$ = i;
+                          }
+   | condterm;
+condterm: exp_arit LESSTHAN exp_arit { 
+                                int i = GenVarTemp(); 
+                                generaCodigo(MENOR, i, $1, $3); 
+                                $$ = i;
+                             }
+    | exp_arit GREATERTHAN exp_arit { 
+                                  int i = GenVarTemp(); 
+                                  generaCodigo(MAYOR, i, $1, $3); 
+                                  $$ = i;
+                                }
+    | exp_arit LESSEQUAL exp_arit { 
+                                int i = GenVarTemp(); 
+                                generaCodigo(MENOR_IGUAL, i, $1, $3); 
+                                $$ = i;
+                              }
+    | exp_arit GREATEREQUAL exp_arit { 
+                                    int i = GenVarTemp(); 
+                                    generaCodigo(MAYOR_IGUAL, i, $1, $3); 
+                                    $$ = i;
+                                 }
     | exp_arit;
+
 exp_arit: exp_arit PLUS term_arit1 {
                                       int i = GenVarTemp(); 
                                       generaCodigo(SUMAR, i, $1, $3); 
@@ -144,7 +173,7 @@ term_arit1: term_arit1 TIMES term_arit2 {
           | term_arit2;
 term_arit2: MINUS term_arit2 %prec UMINUS { $$ = -$2; }
           | term_arit3;
-term_arit3: LPAREN exp RPAREN {
+term_arit3: LPAREN exp_arit RPAREN {
                                 int i = GenVarTemp(); 
                                 generaCodigo(PARENTESIS, i, $2, '-'); 
                                 $$ = i;
@@ -184,6 +213,53 @@ int localizaSimb(char *nom, int tok) {
   if(tok == DOUBLECONST) sscanf(nom, "%lf", &TablaSim[nSim].valor);
 	nSim++;
 	return nSim - 1;
+}
+
+void interpretaCodigo(){
+  int i, a1, a2, a3, op, j, temp;
+  for(i = 0; i <= cx; i++){
+    op = TCodigo[i].op;
+    a1 = TCodigo[i].a1;
+    a2 = TCodigo[i].a2;
+    a3 = TCodigo[i].a3;
+
+    if(op==MAYOR){
+      if(TablaSim[a2].valor>TablaSim[a3].valor) TablaSim[a1].valor=1;
+      else TablaSim[a1].valor=0;
+    }
+    if(op==MENOR){
+      if(TablaSim[a2].valor<TablaSim[a3].valor) TablaSim[a1].valor=1;
+      else TablaSim[a1].valor=0;
+    }
+    if(op==MAYOR_IGUAL){
+      if(TablaSim[a2].valor>=TablaSim[a3].valor) TablaSim[a1].valor=1;
+      else TablaSim[a1].valor=0;
+    }
+    if(op==MENOR_IGUAL){
+      if(TablaSim[a2].valor<=TablaSim[a3].valor) TablaSim[a1].valor=1;
+      else TablaSim[a1].valor=0;
+    }
+    if(op==IGUAL){
+      if(TablaSim[a2].valor==TablaSim[a3].valor) TablaSim[a1].valor=1;
+      else TablaSim[a1].valor=0;
+    }
+    if(op==DESIGUAL){
+      if(TablaSim[a2].valor!=TablaSim[a3].valor) TablaSim[a1].valor=1;
+      else TablaSim[a1].valor=0;
+    }
+    if(op==SUMAR) TablaSim[a1].valor = TablaSim[a2].valor + TablaSim[a3].valor;
+    if(op==RESTAR) TablaSim[a1].valor = TablaSim[a2].valor - TablaSim[a3].valor;
+    if(op==MULTIPLICAR) TablaSim[a1].valor = TablaSim[a2].valor * TablaSim[a3].valor;
+    if(op==DIVIDIR) TablaSim[a1].valor = TablaSim[a2].valor / TablaSim[a3].valor;
+    // if(op==PORCENTAJE) TablaSim[a1].valor = TablaSim[a2].valor % TablaSim[a3].valor;
+    if(op==PARENTESIS) TablaSim[a1].valor = TablaSim[a2].valor;
+    if(op==ASIGNAR) TablaSim[a1].valor = TablaSim[a2].valor;
+    if(op==SALTARF1){
+      if(TablaSim[a1].valor==0) i = a2 - 1;
+    }
+    if(op==SALTARF2) i = a1 - 1;
+    if(op==BUCLE) i = a1;
+  }
 }
 
 void imprimeTablaSim(){
@@ -382,5 +458,8 @@ int main() {
 	imprimeTablaSim();
   printf("tabla de codigos\n");
 	imprimeTablaCod();
+  printf("Interpreta codigo\n");
+	interpretaCodigo();
+	imprimeTablaSim();
   return 0;
 }

@@ -1,0 +1,20 @@
+cantidad = 10
+
+ENTERO x[cantidad]
+
+x[0] = 0
+x[1] = 1
+
+contador = 2
+
+MIENTRAS contador < cantidad HACER
+    x[contador] = x[contador - 1] + x[contador - 2]
+    contador = contador + 1
+FINMIENTRAS
+
+contador = 0
+
+MIENTRAS contador < cantidad HACER
+    SALIDA x[contador]
+    contador = contador + 1
+FINMIENTRAS
