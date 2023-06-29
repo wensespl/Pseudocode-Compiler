@@ -10,39 +10,63 @@ from Parser import Parser
 from IRGenerator import Generator
 
 
-def rgbToHex(rgb):
-    return "#%02x%02x%02x" % rgb
-
-normal = rgbToHex((213, 206, 217))
-keywords1 = rgbToHex((199, 77, 237))
-keywords2 = rgbToHex((249, 38, 114))
-keywords3 = rgbToHex((238, 93, 67))
-keywords4 = rgbToHex((124, 183, 255))
-keywords5 = rgbToHex((150, 224, 114))
-keywords6 = rgbToHex((255, 0, 170))
-comments = rgbToHex((160, 161, 167))
-string = rgbToHex((255, 230, 109))
-numbers = rgbToHex((243, 156, 18))
-variables = rgbToHex((0, 232, 198))
-function = rgbToHex((95, 211, 234))
-background1 = rgbToHex((42, 42, 42))
-background2 = rgbToHex((35, 38, 46))
-font = 'Consolas 12'
-
-repl = [
-    [r'(\+|-|\*|/|=|%|<|<=|>|>=|==|<>)', keywords3],
-    [r'\d+(\.\d*)?', numbers],
-    [r'[a-zA-Z_][a-zA-Z0-9_]*', variables],
-    ['(ENTRADA|SALIDA)', keywords1],
-    ['(ENTERO|DECIMAL)', keywords1],
-    ['(SUBRUTINA|FINSUBRUTINA)', keywords4],
-    ['(DEVOLVER)', keywords6],
-    ['(^| )(ENTONCES|SINO|SI|FINSI)($| )', keywords4],
-    ['(MIENTRAS|HACER|FINMIENTRAS)', keywords4],
-    ['(PARA|HASTA|FINPARA)', keywords4],
-    [r'".*?"', string],
-    ['#.*?$', comments]
-]
+class Helper():
+    def __init__(self) -> None:
+        self.change_theme1()
+        self.fuente_font = 'Consolas 16'  
+    
+    def change_theme1(self):
+        self.color_normal = self.rgbToHex((213, 206, 217))
+        self.color_keywords1 = self.rgbToHex((199, 77, 237))
+        # keywords2 = rgbToHex((249, 38, 114))
+        self.color_keywords3 = self.rgbToHex((238, 93, 67))
+        self.color_keywords4 = self.rgbToHex((124, 183, 255))
+        # keywords5 = rgbToHex((150, 224, 114))
+        self.color_keywords6 = self.rgbToHex((255, 0, 170))
+        self.color_comments = self.rgbToHex((160, 161, 167))
+        self.color_string = self.rgbToHex((255, 230, 109))
+        self.color_numbers = self.rgbToHex((243, 156, 18))
+        self.color_variables = self.rgbToHex((0, 232, 198))
+        # function = rgbToHex((95, 211, 234))
+        # background1 = rgbToHex((42, 42, 42))
+        self.color_background2 = self.rgbToHex((35, 38, 46))
+        self.change_repl()
+    
+    def change_theme2(self):
+        self.color_normal = self.rgbToHex((0, 0, 0))
+        self.color_keywords1 = self.rgbToHex((0, 0, 0))
+        # keywords2 = rgbToHex((249, 38, 114))
+        self.color_keywords3 = self.rgbToHex((0, 0, 0))
+        self.color_keywords4 = self.rgbToHex((0, 0, 0))
+        # keywords5 = rgbToHex((150, 224, 114))
+        self.color_keywords6 = self.rgbToHex((0, 0, 0))
+        self.color_comments = self.rgbToHex((0, 0, 0))
+        self.color_string = self.rgbToHex((0, 0, 0))
+        self.color_numbers = self.rgbToHex((0, 0, 0))
+        self.color_variables = self.rgbToHex((0, 0, 0))
+        # function = rgbToHex((95, 211, 234))
+        # background1 = rgbToHex((42, 42, 42))
+        self.color_background2 = self.rgbToHex((255, 255, 255))
+        self.change_repl()
+    
+    def change_repl(self):
+        self.repl = [
+                [r'(\+|-|\*|/|=|%|<|<=|>|>=|==|<>)', self.color_keywords3],
+                [r'\d+(\.\d*)?', self.color_numbers],
+                [r'[a-zA-Z_][a-zA-Z0-9_]*', self.color_variables],
+                ['(ENTRADA|SALIDA)', self.color_keywords1],
+                ['(ENTERO|DECIMAL)', self.color_keywords1],
+                ['(SUBRUTINA|FINSUBRUTINA)', self.color_keywords4],
+                ['(DEVOLVER)', self.color_keywords6],
+                ['(^| )(ENTONCES|SINO|SI|FINSI)($| )', self.color_keywords4],
+                ['(MIENTRAS|HACER|FINMIENTRAS)', self.color_keywords4],
+                ['(PARA|HASTA|FINPARA)', self.color_keywords4],
+                [r'".*?"', self.color_string],
+                ['#.*?$', self.color_comments]
+            ]
+    
+    def rgbToHex(self,rgb):
+        return "#%02x%02x%02x" % rgb
 
 class IDEFrame(Frame):
     def __init__(self, container):
@@ -50,6 +74,9 @@ class IDEFrame(Frame):
         self.container = container
         self.previous_text = ''
         self.actual_filepath = ''
+        self.bison_window = None
+        self.helper = Helper()
+        self.theme_color = "black"
 
         self.__config()
 
@@ -59,33 +86,44 @@ class IDEFrame(Frame):
         self.file_bar = Menu(self.menu_bar, tearoff=0)
         self.file_bar.add_command(label='Open file', command=self.open_file)
         self.file_bar.add_command(label='Save file', command=self.save_file)
-        
         self.menu_bar.add_cascade(label='Archivo', menu=self.file_bar)
         
         self.compiler_bar = Menu(self.menu_bar, tearoff=0)
         self.compiler_bar.add_command(label='Ejecutar', command=self.execute)
         self.compiler_bar.add_command(label='Compilar', command=self.compile)
-        
         self.menu_bar.add_cascade(label='Compilar', menu=self.compiler_bar)
         
         self.bison_bar = Menu(self.menu_bar, tearoff=0)
         self.bison_bar.add_command(label='Ejecutar', command=self.run_bison)
-        
         self.menu_bar.add_cascade(label='Bison', menu=self.bison_bar)
+        
+        self.theme_bar = Menu(self.menu_bar, tearoff=0)
+        self.theme_bar.add_command(label='Tema claro', command=self.change_theme2)
+        self.theme_bar.add_command(label='Tema oscuro', command=self.change_theme1)
+        self.menu_bar.add_cascade(label='Tema de color', menu=self.theme_bar)
 
         self.container.config(menu=self.menu_bar)
 
         self.edit_area = Text(
-            self, background=background2, foreground=normal, insertbackground=normal, borderwidth=10, relief='flat', font=font)
+                                self, 
+                                background=self.helper.color_background2, 
+                                foreground=self.helper.color_normal, 
+                                insertbackground=self.helper.color_normal, 
+                                borderwidth=10, 
+                                relief='flat', 
+                                font=self.helper.fuente_font
+                                )
         self.edit_area.pack(fill='both', expand=1)
         
         self.edit_area.bind('<KeyRelease>', self.changes)
         
         self.edit_area.bind('<Control-s>', self.auto_save_file)
 
-        self.terminal = Terminal(self, borderwidth=10,
-                                 relief='flat', background='Black', foreground='White')
+        self.terminal = Terminal(self, borderwidth=10, relief='flat', foreground='#000000', font=self.helper.fuente_font)
         self.terminal.shell = True
+        self.terminal.tag_config("output", foreground='#000000')
+        self.terminal.basename = "SPL-Compiler$"
+        self.terminal.tag_config("basename", foreground='#FF007F')
         self.terminal.pack(expand=True, fill='both')
     
     def gen_outputll(self):
@@ -126,6 +164,9 @@ class IDEFrame(Frame):
             showwarning("Warning", "Debe tener un archivo activo")
             return
         
+        if self.bison_window is not None:
+            self.bison_window.destroy()
+        
         self.bison_window = Toplevel(self.container)
         
         window_width = 800
@@ -141,7 +182,7 @@ class IDEFrame(Frame):
         self.bison_window.resizable(True, True)
         
         edit_area = Text(
-            self.bison_window, borderwidth=10, relief='flat')
+            self.bison_window, borderwidth=10, relief='flat', font=self.helper.fuente_font)
         edit_area.pack(fill='both', expand=1)
         
         pathexe = Path("project_bison/SPL.exe")
@@ -150,21 +191,49 @@ class IDEFrame(Frame):
         output = subprocess.run([pathexe, '<', pathfile], shell=True, capture_output=True)
         
         edit_area.insert(1.0, output.stdout.decode("utf-8"))
-       
+        
+    def change_theme1(self):
+        if self.theme_color == "black":
+            return
+        
+        self.helper.change_theme1()
+        self.configure_edit_area()
+        self.theme_color = "black"
+    
+    def change_theme2(self):
+        if self.theme_color == "white":
+            return
+        
+        self.helper.change_theme2()
+        self.configure_edit_area()
+        
+        self.theme_color = "white"
+
+    def configure_edit_area(self):
+        self.edit_area.configure(
+            background=self.helper.color_background2, 
+            foreground=self.helper.color_normal, 
+            insertbackground=self.helper.color_normal,
+            font=self.helper.fuente_font
+            )
+        self.change_tags()
+    
+    def change_tags(self):
+        for tag in self.edit_area.tag_names():
+            self.edit_area.tag_remove(tag, 1.0, END)
+        
+        i = 0
+        for pattern, color in self.helper.repl:
+            for start, end in self.search_re(pattern, self.edit_area.get(1.0, END)):
+                self.edit_area.tag_add(f'{i}', start, end)
+                self.edit_area.tag_config(f'{i}', foreground=color)
+                i += 1
     
     def changes(self, event=None):
         if self.edit_area.get(1.0, END) == self.previous_text:
             return
         
-        for tag in self.edit_area.tag_names():
-            self.edit_area.tag_remove(tag, 1.0, END)
-        
-        i = 0
-        for pattern, color in repl:
-            for start, end in self.search_re(pattern, self.edit_area.get(1.0, END)):
-                self.edit_area.tag_add(f'{i}', start, end)
-                self.edit_area.tag_config(f'{i}', foreground=color)
-                i += 1
+        self.change_tags()
                 
         self.previous_text = self.edit_area.get(1.0, END)
     

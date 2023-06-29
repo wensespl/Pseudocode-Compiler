@@ -18,5 +18,3 @@ PARA i = 0 HASTA 15
     SALIDA fibonacci(i)
 FINPARA
 
-
-
