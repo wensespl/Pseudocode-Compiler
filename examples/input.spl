@@ -5,18 +5,24 @@ inicioAlgoritmo
   y = 20;
   a = 0;
 
-  si x > y
+  si x < y
     inicio
       a = 1;
+      si x < y
+        inicio
+          a = 3;
+        fin
+      finSi
     fin
   sino
     inicio
       a = 2;
     fin
+  finSi
 
   c = 0;
   i = 0;
-  mientras i > 4 hacer
+  mientras i < 4 hacer
     inicio
       c = c + 1;
       i = i + 1;
@@ -31,4 +37,6 @@ inicioAlgoritmo
   finPara
 
 finAlgoritmo
+
+
 
