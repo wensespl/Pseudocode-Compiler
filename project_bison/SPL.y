@@ -47,11 +47,11 @@ programa: ALGORITMO ID INICIOALGORITMO listaInstruccion FINALGORITMO;
 listaInstruccion: instruccion listaInstruccion
                 |  ;
 
-instruccion: SI cond {generaCodigo(SALTAR1,$2,'?','-');$$=cx;} INICIO bloque {generaCodigo(SALTAR2,$2,'?','-');$$=cx;}{TCodigo[$3].a2=cx+1;} sino {TCodigo[$6].a2=cx+1;};
-sino: SINO INICIO bloque
+instruccion: SI cond {generaCodigo(SALTAR1,$2,'?','-');$$=cx;} INICIO bloque {generaCodigo(SALTAR2,$2,'?','-');$$=cx;}{TCodigo[$3].a2=cx+1;} otro {TCodigo[$6].a2=cx+1;} FIN;
+otro: SINO INICIO bloque
     |  ;
-instruccion: MIENTRAS cond {generaCodigo(SALTAR1,$2,'?','-');$$=cx;} HACER INICIO bloque {generaCodigo(BUCLE_WHILE,$3,'-','-');}{TCodigo[$3].a2=cx+1;} bloque;
-instruccion: PARA ID {$$=localizaSimb(lexema,ID);} HASTA expr {generaCodigo(SALTAR_FOR,$3,$5,'?');$$=cx;} INICIO bloque {generaCodigo(BUCLE_FOR,$3,$6,'-');}{TCodigo[$6].a3=cx+1;} bloque;
+instruccion: MIENTRAS cond {generaCodigo(SALTAR1,$2,'?','-');$$=cx;} HACER INICIO bloque {generaCodigo(BUCLE_WHILE,$3,'-','-');}{TCodigo[$3].a2=cx+1;} FIN;
+instruccion: PARA ID {$$=localizaSimb(lexema,ID);} HASTA expr {generaCodigo(SALTAR_FOR,$3,$5,'?');$$=cx;} INICIO bloque {generaCodigo(BUCLE_FOR,$3,$6,'-');}{TCodigo[$6].a3=cx+1;} FIN;
 bloque: listaInstruccion FIN
       | instruccion;
 instruccion: ID{$$=localizaSimb(lexema,ID);} '=' expr{generaCodigo(ASIGNAR,$2,$4,'-');}';';
