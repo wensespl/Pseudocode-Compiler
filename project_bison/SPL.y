@@ -187,7 +187,6 @@ void InterpretaCodigo(){
     if(op==SALTAR2){
       if(TablaSim[a1].valor==1) i=a2-1;
     }
-    if(op==BUCLE_WHILE) i=a1-2;
     if(op==SALTAR_FOR){
       if(TablaSim[a1].valor >= TablaSim[a2].valor) i=a3-1;
     }
@@ -195,6 +194,7 @@ void InterpretaCodigo(){
       TablaSim[a1].valor += 1;
       i=a2-1;
     }
+    if(op==BUCLE_WHILE) i=a1-2;
   }
 }
 
@@ -230,43 +230,22 @@ int localizaSimb(char *nom, int tok){
 void imprimeTablaSim(){
   int i;
   for(i=0; i<nSim; i++){
-    // if(TablaSim[i].tokenaux==DESIGUAL){
-    //   if(TablaSim[i].valor==1.0)
-    //     printf("%d nombre = %s tok = %d valor = verdadero\n",i,TablaSim[i].nombre,TablaSim[i].token);
-    //   else
-    //     printf("%d nombre = %s tok = %d valor = falso\n",i,TablaSim[i].nombre,TablaSim[i].token);
-    // }
-    // if(TablaSim[i].tokenaux==IGUAL){
-    //   if(TablaSim[i].valor==1.0)
-    //     printf("%d nombre = %s tok = %d valor = verdadero\n",i,TablaSim[i].nombre,TablaSim[i].token);
-    //   else
-    //     printf("%d nombre = %s tok = %d valor = falso\n",i,TablaSim[i].nombre,TablaSim[i].token);
-    // }
-    // if(TablaSim[i].tokenaux==MAYOR){
-    //   if(TablaSim[i].valor==1.0)
-    //     printf("%d nombre = %s tok = %d valor = verdadero\n",i,TablaSim[i].nombre,TablaSim[i].token);
-    //   else
-    //     printf("%d nombre = %s tok = %d valor = falso\n",i,TablaSim[i].nombre,TablaSim[i].token);
-    // }
-    // if(TablaSim[i].tokenaux==MENOR){
-    //   if(TablaSim[i].valor==1.0)
-    //     printf("%d nombre = %s tok = %d valor = verdadero\n",i,TablaSim[i].nombre,TablaSim[i].token);
-    //   else
-    //     printf("%d nombre = %s tok = %d valor = falso\n",i,TablaSim[i].nombre,TablaSim[i].token);
-    // }
-    // if(TablaSim[i].tokenaux==MAYOR_IGUAL){
-    //   if(TablaSim[i].valor==1.0)
-    //     printf("%d nombre = %s tok = %d valor = verdadero\n",i,TablaSim[i].nombre,TablaSim[i].token);
-    //   else
-    //     printf("%d nombre = %s tok = %d valor = falso\n",i,TablaSim[i].nombre,TablaSim[i].token);
-    // }
-    // if(TablaSim[i].tokenaux==MENOR_IGUAL){
-    //   if(TablaSim[i].valor==1.0)
-    //     printf("%d nombre = %s tok = %d valor = verdadero\n",i,TablaSim[i].nombre,TablaSim[i].token);
-    //   else
-    //     printf("%d nombre = %s tok = %d valor = falso\n",i,TablaSim[i].nombre,TablaSim[i].token);
-    // }
-    printf("%4d nombre = %6s tok = %6d valor = %4.3lf\n",i,TablaSim[i].nombre,TablaSim[i].token,TablaSim[i].valor);
+    if(TablaSim[i].tokenaux==MAYOR ||
+    TablaSim[i].tokenaux==MENOR ||
+    TablaSim[i].tokenaux==IGUAL ||
+    TablaSim[i].tokenaux==DESIGUAL ||
+    TablaSim[i].tokenaux==MAYOR_IGUAL ||
+    TablaSim[i].tokenaux==MENOR_IGUAL){
+      if(TablaSim[i].valor==1.0){
+        printf("%4d nombre=%6s tok=%5d valor=  V\n",i,TablaSim[i].nombre,TablaSim[i].token);
+        continue;
+      }
+      else{
+        printf("%4d nombre=%6s tok=%5d valor=  F\n",i,TablaSim[i].nombre,TablaSim[i].token);
+        continue;
+      }
+    }
+    printf("%4d nombre=%6s tok=%5d valor=%4.3lf\n",i,TablaSim[i].nombre,TablaSim[i].token,TablaSim[i].valor);
   }
 }
 
