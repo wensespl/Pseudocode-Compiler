@@ -1,0 +1,1081 @@
+Terminals unused in grammar
+
+   IMPRIMIR
+   ASIGNAR
+   SUMAR
+   RESTAR
+   MULTIPLICAR
+   DIVIDIR
+   PARENTESIS
+   SALTAR1
+   SALTAR2
+   SALTAR_FOR
+   BUCLE_WHILE
+   BUCLE_FOR
+   MAYOR
+   MENOR
+   IGUAL
+   DESIGUAL
+   MAYOR_IGUAL
+   MENOR_IGUAL
+
+
+Gramática
+
+    0 $accept: stmt_list $end
+
+    1 stmt_list: simple_stmt
+    2          | stmt_list simple_stmt
+
+    3 simple_stmt: assig_stmt
+    4            | if_stmt
+    5            | while_stmt
+    6            | for_stmt
+    7            | output_stmt
+
+    8 @1: /* vacío */
+
+    9 @2: /* vacío */
+
+   10 $@3: /* vacío */
+
+   11 $@4: /* vacío */
+
+   12 if_stmt: IF cond @1 THEN stmt_list @2 $@3 otro $@4 ENDIF
+
+   13 otro: ELSE stmt_list
+   14     | /* vacío */
+
+   15 @5: /* vacío */
+
+   16 $@6: /* vacío */
+
+   17 $@7: /* vacío */
+
+   18 while_stmt: WHILE cond @5 DO stmt_list $@6 $@7 ENDWHILE
+
+   19 @8: /* vacío */
+
+   20 @9: /* vacío */
+
+   21 $@10: /* vacío */
+
+   22 $@11: /* vacío */
+
+   23 for_stmt: FOR VAR @8 TO expr @9 stmt_list $@10 $@11 ENDFOR
+
+   24 @12: /* vacío */
+
+   25 assig_stmt: VAR @12 '=' expr
+
+   26 output_stmt: OUTPUT expr
+
+   27 cond: expr '=' '=' expr
+   28     | expr '<' '>' expr
+   29     | cond2
+
+   30 cond2: expr '<' expr
+   31      | expr '<' '=' expr
+   32      | expr '>' expr
+   33      | expr '>' '=' expr
+
+   34 expr: expr '+' term
+   35     | expr '-' term
+   36     | term
+
+   37 term: term '*' term2
+   38     | term '/' term2
+   39     | term2
+
+   40 term2: '(' expr ')'
+   41      | INTCONST
+   42      | DOUBLECONST
+   43      | VAR
+
+
+Terminales con las reglas donde aparecen
+
+$end (0) 0
+'(' (40) 40
+')' (41) 40
+'*' (42) 37
+'+' (43) 34
+'-' (45) 35
+'/' (47) 38
+'<' (60) 28 30 31
+'=' (61) 25 27 31 33
+'>' (62) 28 32 33
+error (256)
+VAR (258) 23 25 43
+INTCONST (259) 41
+DOUBLECONST (260) 42
+OUTPUT (261) 26
+IF (262) 12
+THEN (263) 12
+ELSE (264) 13
+ENDIF (265) 12
+WHILE (266) 18
+DO (267) 18
+ENDWHILE (268) 18
+FOR (269) 23
+TO (270) 23
+ENDFOR (271) 23
+IMPRIMIR (272)
+ASIGNAR (273)
+SUMAR (274)
+RESTAR (275)
+MULTIPLICAR (276)
+DIVIDIR (277)
+PARENTESIS (278)
+SALTAR1 (279)
+SALTAR2 (280)
+SALTAR_FOR (281)
+BUCLE_WHILE (282)
+BUCLE_FOR (283)
+MAYOR (284)
+MENOR (285)
+IGUAL (286)
+DESIGUAL (287)
+MAYOR_IGUAL (288)
+MENOR_IGUAL (289)
+
+
+No terminales con las reglas donde aparecen
+
+$accept (44)
+    en la izquierda: 0
+stmt_list (45)
+    en la izquierda: 1 2, en la derecha: 0 2 12 13 18 23
+simple_stmt (46)
+    en la izquierda: 3 4 5 6 7, en la derecha: 1 2
+if_stmt (47)
+    en la izquierda: 12, en la derecha: 4
+@1 (48)
+    en la izquierda: 8, en la derecha: 12
+@2 (49)
+    en la izquierda: 9, en la derecha: 12
+$@3 (50)
+    en la izquierda: 10, en la derecha: 12
+$@4 (51)
+    en la izquierda: 11, en la derecha: 12
+otro (52)
+    en la izquierda: 13 14, en la derecha: 12
+while_stmt (53)
+    en la izquierda: 18, en la derecha: 5
+@5 (54)
+    en la izquierda: 15, en la derecha: 18
+$@6 (55)
+    en la izquierda: 16, en la derecha: 18
+$@7 (56)
+    en la izquierda: 17, en la derecha: 18
+for_stmt (57)
+    en la izquierda: 23, en la derecha: 6
+@8 (58)
+    en la izquierda: 19, en la derecha: 23
+@9 (59)
+    en la izquierda: 20, en la derecha: 23
+$@10 (60)
+    en la izquierda: 21, en la derecha: 23
+$@11 (61)
+    en la izquierda: 22, en la derecha: 23
+assig_stmt (62)
+    en la izquierda: 25, en la derecha: 3
+@12 (63)
+    en la izquierda: 24, en la derecha: 25
+output_stmt (64)
+    en la izquierda: 26, en la derecha: 7
+cond (65)
+    en la izquierda: 27 28 29, en la derecha: 12 18
+cond2 (66)
+    en la izquierda: 30 31 32 33, en la derecha: 29
+expr (67)
+    en la izquierda: 34 35 36, en la derecha: 23 25 26 27 28 30 31
+    32 33 34 35 40
+term (68)
+    en la izquierda: 37 38 39, en la derecha: 34 35 36 37 38
+term2 (69)
+    en la izquierda: 40 41 42 43, en la derecha: 37 38 39
+
+
+estado 0
+
+    0 $accept: . stmt_list $end
+
+    VAR     desplazar e ir al estado 1
+    OUTPUT  desplazar e ir al estado 2
+    IF      desplazar e ir al estado 3
+    WHILE   desplazar e ir al estado 4
+    FOR     desplazar e ir al estado 5
+
+    stmt_list    ir al estado 6
+    simple_stmt  ir al estado 7
+    if_stmt      ir al estado 8
+    while_stmt   ir al estado 9
+    for_stmt     ir al estado 10
+    assig_stmt   ir al estado 11
+    output_stmt  ir al estado 12
+
+
+estado 1
+
+   25 assig_stmt: VAR . @12 '=' expr
+
+    $default  reduce usando la regla 24 (@12)
+
+    @12  ir al estado 13
+
+
+estado 2
+
+   26 output_stmt: OUTPUT . expr
+
+    VAR          desplazar e ir al estado 14
+    INTCONST     desplazar e ir al estado 15
+    DOUBLECONST  desplazar e ir al estado 16
+    '('          desplazar e ir al estado 17
+
+    expr   ir al estado 18
+    term   ir al estado 19
+    term2  ir al estado 20
+
+
+estado 3
+
+   12 if_stmt: IF . cond @1 THEN stmt_list @2 $@3 otro $@4 ENDIF
+
+    VAR          desplazar e ir al estado 14
+    INTCONST     desplazar e ir al estado 15
+    DOUBLECONST  desplazar e ir al estado 16
+    '('          desplazar e ir al estado 17
+
+    cond   ir al estado 21
+    cond2  ir al estado 22
+    expr   ir al estado 23
+    term   ir al estado 19
+    term2  ir al estado 20
+
+
+estado 4
+
+   18 while_stmt: WHILE . cond @5 DO stmt_list $@6 $@7 ENDWHILE
+
+    VAR          desplazar e ir al estado 14
+    INTCONST     desplazar e ir al estado 15
+    DOUBLECONST  desplazar e ir al estado 16
+    '('          desplazar e ir al estado 17
+
+    cond   ir al estado 24
+    cond2  ir al estado 22
+    expr   ir al estado 23
+    term   ir al estado 19
+    term2  ir al estado 20
+
+
+estado 5
+
+   23 for_stmt: FOR . VAR @8 TO expr @9 stmt_list $@10 $@11 ENDFOR
+
+    VAR  desplazar e ir al estado 25
+
+
+estado 6
+
+    0 $accept: stmt_list . $end
+    2 stmt_list: stmt_list . simple_stmt
+
+    $end    desplazar e ir al estado 26
+    VAR     desplazar e ir al estado 1
+    OUTPUT  desplazar e ir al estado 2
+    IF      desplazar e ir al estado 3
+    WHILE   desplazar e ir al estado 4
+    FOR     desplazar e ir al estado 5
+
+    simple_stmt  ir al estado 27
+    if_stmt      ir al estado 8
+    while_stmt   ir al estado 9
+    for_stmt     ir al estado 10
+    assig_stmt   ir al estado 11
+    output_stmt  ir al estado 12
+
+
+estado 7
+
+    1 stmt_list: simple_stmt .
+
+    $default  reduce usando la regla 1 (stmt_list)
+
+
+estado 8
+
+    4 simple_stmt: if_stmt .
+
+    $default  reduce usando la regla 4 (simple_stmt)
+
+
+estado 9
+
+    5 simple_stmt: while_stmt .
+
+    $default  reduce usando la regla 5 (simple_stmt)
+
+
+estado 10
+
+    6 simple_stmt: for_stmt .
+
+    $default  reduce usando la regla 6 (simple_stmt)
+
+
+estado 11
+
+    3 simple_stmt: assig_stmt .
+
+    $default  reduce usando la regla 3 (simple_stmt)
+
+
+estado 12
+
+    7 simple_stmt: output_stmt .
+
+    $default  reduce usando la regla 7 (simple_stmt)
+
+
+estado 13
+
+   25 assig_stmt: VAR @12 . '=' expr
+
+    '='  desplazar e ir al estado 28
+
+
+estado 14
+
+   43 term2: VAR .
+
+    $default  reduce usando la regla 43 (term2)
+
+
+estado 15
+
+   41 term2: INTCONST .
+
+    $default  reduce usando la regla 41 (term2)
+
+
+estado 16
+
+   42 term2: DOUBLECONST .
+
+    $default  reduce usando la regla 42 (term2)
+
+
+estado 17
+
+   40 term2: '(' . expr ')'
+
+    VAR          desplazar e ir al estado 14
+    INTCONST     desplazar e ir al estado 15
+    DOUBLECONST  desplazar e ir al estado 16
+    '('          desplazar e ir al estado 17
+
+    expr   ir al estado 29
+    term   ir al estado 19
+    term2  ir al estado 20
+
+
+estado 18
+
+   26 output_stmt: OUTPUT expr .
+   34 expr: expr . '+' term
+   35     | expr . '-' term
+
+    '+'  desplazar e ir al estado 30
+    '-'  desplazar e ir al estado 31
+
+    $default  reduce usando la regla 26 (output_stmt)
+
+
+estado 19
+
+   36 expr: term .
+   37 term: term . '*' term2
+   38     | term . '/' term2
+
+    '*'  desplazar e ir al estado 32
+    '/'  desplazar e ir al estado 33
+
+    $default  reduce usando la regla 36 (expr)
+
+
+estado 20
+
+   39 term: term2 .
+
+    $default  reduce usando la regla 39 (term)
+
+
+estado 21
+
+   12 if_stmt: IF cond . @1 THEN stmt_list @2 $@3 otro $@4 ENDIF
+
+    $default  reduce usando la regla 8 (@1)
+
+    @1  ir al estado 34
+
+
+estado 22
+
+   29 cond: cond2 .
+
+    $default  reduce usando la regla 29 (cond)
+
+
+estado 23
+
+   27 cond: expr . '=' '=' expr
+   28     | expr . '<' '>' expr
+   30 cond2: expr . '<' expr
+   31      | expr . '<' '=' expr
+   32      | expr . '>' expr
+   33      | expr . '>' '=' expr
+   34 expr: expr . '+' term
+   35     | expr . '-' term
+
+    '='  desplazar e ir al estado 35
+    '<'  desplazar e ir al estado 36
+    '>'  desplazar e ir al estado 37
+    '+'  desplazar e ir al estado 30
+    '-'  desplazar e ir al estado 31
+
+
+estado 24
+
+   18 while_stmt: WHILE cond . @5 DO stmt_list $@6 $@7 ENDWHILE
+
+    $default  reduce usando la regla 15 (@5)
+
+    @5  ir al estado 38
+
+
+estado 25
+
+   23 for_stmt: FOR VAR . @8 TO expr @9 stmt_list $@10 $@11 ENDFOR
+
+    $default  reduce usando la regla 19 (@8)
+
+    @8  ir al estado 39
+
+
+estado 26
+
+    0 $accept: stmt_list $end .
+
+    $default  aceptar
+
+
+estado 27
+
+    2 stmt_list: stmt_list simple_stmt .
+
+    $default  reduce usando la regla 2 (stmt_list)
+
+
+estado 28
+
+   25 assig_stmt: VAR @12 '=' . expr
+
+    VAR          desplazar e ir al estado 14
+    INTCONST     desplazar e ir al estado 15
+    DOUBLECONST  desplazar e ir al estado 16
+    '('          desplazar e ir al estado 17
+
+    expr   ir al estado 40
+    term   ir al estado 19
+    term2  ir al estado 20
+
+
+estado 29
+
+   34 expr: expr . '+' term
+   35     | expr . '-' term
+   40 term2: '(' expr . ')'
+
+    '+'  desplazar e ir al estado 30
+    '-'  desplazar e ir al estado 31
+    ')'  desplazar e ir al estado 41
+
+
+estado 30
+
+   34 expr: expr '+' . term
+
+    VAR          desplazar e ir al estado 14
+    INTCONST     desplazar e ir al estado 15
+    DOUBLECONST  desplazar e ir al estado 16
+    '('          desplazar e ir al estado 17
+
+    term   ir al estado 42
+    term2  ir al estado 20
+
+
+estado 31
+
+   35 expr: expr '-' . term
+
+    VAR          desplazar e ir al estado 14
+    INTCONST     desplazar e ir al estado 15
+    DOUBLECONST  desplazar e ir al estado 16
+    '('          desplazar e ir al estado 17
+
+    term   ir al estado 43
+    term2  ir al estado 20
+
+
+estado 32
+
+   37 term: term '*' . term2
+
+    VAR          desplazar e ir al estado 14
+    INTCONST     desplazar e ir al estado 15
+    DOUBLECONST  desplazar e ir al estado 16
+    '('          desplazar e ir al estado 17
+
+    term2  ir al estado 44
+
+
+estado 33
+
+   38 term: term '/' . term2
+
+    VAR          desplazar e ir al estado 14
+    INTCONST     desplazar e ir al estado 15
+    DOUBLECONST  desplazar e ir al estado 16
+    '('          desplazar e ir al estado 17
+
+    term2  ir al estado 45
+
+
+estado 34
+
+   12 if_stmt: IF cond @1 . THEN stmt_list @2 $@3 otro $@4 ENDIF
+
+    THEN  desplazar e ir al estado 46
+
+
+estado 35
+
+   27 cond: expr '=' . '=' expr
+
+    '='  desplazar e ir al estado 47
+
+
+estado 36
+
+   28 cond: expr '<' . '>' expr
+   30 cond2: expr '<' . expr
+   31      | expr '<' . '=' expr
+
+    VAR          desplazar e ir al estado 14
+    INTCONST     desplazar e ir al estado 15
+    DOUBLECONST  desplazar e ir al estado 16
+    '='          desplazar e ir al estado 48
+    '>'          desplazar e ir al estado 49
+    '('          desplazar e ir al estado 17
+
+    expr   ir al estado 50
+    term   ir al estado 19
+    term2  ir al estado 20
+
+
+estado 37
+
+   32 cond2: expr '>' . expr
+   33      | expr '>' . '=' expr
+
+    VAR          desplazar e ir al estado 14
+    INTCONST     desplazar e ir al estado 15
+    DOUBLECONST  desplazar e ir al estado 16
+    '='          desplazar e ir al estado 51
+    '('          desplazar e ir al estado 17
+
+    expr   ir al estado 52
+    term   ir al estado 19
+    term2  ir al estado 20
+
+
+estado 38
+
+   18 while_stmt: WHILE cond @5 . DO stmt_list $@6 $@7 ENDWHILE
+
+    DO  desplazar e ir al estado 53
+
+
+estado 39
+
+   23 for_stmt: FOR VAR @8 . TO expr @9 stmt_list $@10 $@11 ENDFOR
+
+    TO  desplazar e ir al estado 54
+
+
+estado 40
+
+   25 assig_stmt: VAR @12 '=' expr .
+   34 expr: expr . '+' term
+   35     | expr . '-' term
+
+    '+'  desplazar e ir al estado 30
+    '-'  desplazar e ir al estado 31
+
+    $default  reduce usando la regla 25 (assig_stmt)
+
+
+estado 41
+
+   40 term2: '(' expr ')' .
+
+    $default  reduce usando la regla 40 (term2)
+
+
+estado 42
+
+   34 expr: expr '+' term .
+   37 term: term . '*' term2
+   38     | term . '/' term2
+
+    '*'  desplazar e ir al estado 32
+    '/'  desplazar e ir al estado 33
+
+    $default  reduce usando la regla 34 (expr)
+
+
+estado 43
+
+   35 expr: expr '-' term .
+   37 term: term . '*' term2
+   38     | term . '/' term2
+
+    '*'  desplazar e ir al estado 32
+    '/'  desplazar e ir al estado 33
+
+    $default  reduce usando la regla 35 (expr)
+
+
+estado 44
+
+   37 term: term '*' term2 .
+
+    $default  reduce usando la regla 37 (term)
+
+
+estado 45
+
+   38 term: term '/' term2 .
+
+    $default  reduce usando la regla 38 (term)
+
+
+estado 46
+
+   12 if_stmt: IF cond @1 THEN . stmt_list @2 $@3 otro $@4 ENDIF
+
+    VAR     desplazar e ir al estado 1
+    OUTPUT  desplazar e ir al estado 2
+    IF      desplazar e ir al estado 3
+    WHILE   desplazar e ir al estado 4
+    FOR     desplazar e ir al estado 5
+
+    stmt_list    ir al estado 55
+    simple_stmt  ir al estado 7
+    if_stmt      ir al estado 8
+    while_stmt   ir al estado 9
+    for_stmt     ir al estado 10
+    assig_stmt   ir al estado 11
+    output_stmt  ir al estado 12
+
+
+estado 47
+
+   27 cond: expr '=' '=' . expr
+
+    VAR          desplazar e ir al estado 14
+    INTCONST     desplazar e ir al estado 15
+    DOUBLECONST  desplazar e ir al estado 16
+    '('          desplazar e ir al estado 17
+
+    expr   ir al estado 56
+    term   ir al estado 19
+    term2  ir al estado 20
+
+
+estado 48
+
+   31 cond2: expr '<' '=' . expr
+
+    VAR          desplazar e ir al estado 14
+    INTCONST     desplazar e ir al estado 15
+    DOUBLECONST  desplazar e ir al estado 16
+    '('          desplazar e ir al estado 17
+
+    expr   ir al estado 57
+    term   ir al estado 19
+    term2  ir al estado 20
+
+
+estado 49
+
+   28 cond: expr '<' '>' . expr
+
+    VAR          desplazar e ir al estado 14
+    INTCONST     desplazar e ir al estado 15
+    DOUBLECONST  desplazar e ir al estado 16
+    '('          desplazar e ir al estado 17
+
+    expr   ir al estado 58
+    term   ir al estado 19
+    term2  ir al estado 20
+
+
+estado 50
+
+   30 cond2: expr '<' expr .
+   34 expr: expr . '+' term
+   35     | expr . '-' term
+
+    '+'  desplazar e ir al estado 30
+    '-'  desplazar e ir al estado 31
+
+    $default  reduce usando la regla 30 (cond2)
+
+
+estado 51
+
+   33 cond2: expr '>' '=' . expr
+
+    VAR          desplazar e ir al estado 14
+    INTCONST     desplazar e ir al estado 15
+    DOUBLECONST  desplazar e ir al estado 16
+    '('          desplazar e ir al estado 17
+
+    expr   ir al estado 59
+    term   ir al estado 19
+    term2  ir al estado 20
+
+
+estado 52
+
+   32 cond2: expr '>' expr .
+   34 expr: expr . '+' term
+   35     | expr . '-' term
+
+    '+'  desplazar e ir al estado 30
+    '-'  desplazar e ir al estado 31
+
+    $default  reduce usando la regla 32 (cond2)
+
+
+estado 53
+
+   18 while_stmt: WHILE cond @5 DO . stmt_list $@6 $@7 ENDWHILE
+
+    VAR     desplazar e ir al estado 1
+    OUTPUT  desplazar e ir al estado 2
+    IF      desplazar e ir al estado 3
+    WHILE   desplazar e ir al estado 4
+    FOR     desplazar e ir al estado 5
+
+    stmt_list    ir al estado 60
+    simple_stmt  ir al estado 7
+    if_stmt      ir al estado 8
+    while_stmt   ir al estado 9
+    for_stmt     ir al estado 10
+    assig_stmt   ir al estado 11
+    output_stmt  ir al estado 12
+
+
+estado 54
+
+   23 for_stmt: FOR VAR @8 TO . expr @9 stmt_list $@10 $@11 ENDFOR
+
+    VAR          desplazar e ir al estado 14
+    INTCONST     desplazar e ir al estado 15
+    DOUBLECONST  desplazar e ir al estado 16
+    '('          desplazar e ir al estado 17
+
+    expr   ir al estado 61
+    term   ir al estado 19
+    term2  ir al estado 20
+
+
+estado 55
+
+    2 stmt_list: stmt_list . simple_stmt
+   12 if_stmt: IF cond @1 THEN stmt_list . @2 $@3 otro $@4 ENDIF
+
+    VAR     desplazar e ir al estado 1
+    OUTPUT  desplazar e ir al estado 2
+    IF      desplazar e ir al estado 3
+    WHILE   desplazar e ir al estado 4
+    FOR     desplazar e ir al estado 5
+
+    $default  reduce usando la regla 9 (@2)
+
+    simple_stmt  ir al estado 27
+    if_stmt      ir al estado 8
+    @2           ir al estado 62
+    while_stmt   ir al estado 9
+    for_stmt     ir al estado 10
+    assig_stmt   ir al estado 11
+    output_stmt  ir al estado 12
+
+
+estado 56
+
+   27 cond: expr '=' '=' expr .
+   34 expr: expr . '+' term
+   35     | expr . '-' term
+
+    '+'  desplazar e ir al estado 30
+    '-'  desplazar e ir al estado 31
+
+    $default  reduce usando la regla 27 (cond)
+
+
+estado 57
+
+   31 cond2: expr '<' '=' expr .
+   34 expr: expr . '+' term
+   35     | expr . '-' term
+
+    '+'  desplazar e ir al estado 30
+    '-'  desplazar e ir al estado 31
+
+    $default  reduce usando la regla 31 (cond2)
+
+
+estado 58
+
+   28 cond: expr '<' '>' expr .
+   34 expr: expr . '+' term
+   35     | expr . '-' term
+
+    '+'  desplazar e ir al estado 30
+    '-'  desplazar e ir al estado 31
+
+    $default  reduce usando la regla 28 (cond)
+
+
+estado 59
+
+   33 cond2: expr '>' '=' expr .
+   34 expr: expr . '+' term
+   35     | expr . '-' term
+
+    '+'  desplazar e ir al estado 30
+    '-'  desplazar e ir al estado 31
+
+    $default  reduce usando la regla 33 (cond2)
+
+
+estado 60
+
+    2 stmt_list: stmt_list . simple_stmt
+   18 while_stmt: WHILE cond @5 DO stmt_list . $@6 $@7 ENDWHILE
+
+    VAR     desplazar e ir al estado 1
+    OUTPUT  desplazar e ir al estado 2
+    IF      desplazar e ir al estado 3
+    WHILE   desplazar e ir al estado 4
+    FOR     desplazar e ir al estado 5
+
+    $default  reduce usando la regla 16 ($@6)
+
+    simple_stmt  ir al estado 27
+    if_stmt      ir al estado 8
+    while_stmt   ir al estado 9
+    $@6          ir al estado 63
+    for_stmt     ir al estado 10
+    assig_stmt   ir al estado 11
+    output_stmt  ir al estado 12
+
+
+estado 61
+
+   23 for_stmt: FOR VAR @8 TO expr . @9 stmt_list $@10 $@11 ENDFOR
+   34 expr: expr . '+' term
+   35     | expr . '-' term
+
+    '+'  desplazar e ir al estado 30
+    '-'  desplazar e ir al estado 31
+
+    $default  reduce usando la regla 20 (@9)
+
+    @9  ir al estado 64
+
+
+estado 62
+
+   12 if_stmt: IF cond @1 THEN stmt_list @2 . $@3 otro $@4 ENDIF
+
+    $default  reduce usando la regla 10 ($@3)
+
+    $@3  ir al estado 65
+
+
+estado 63
+
+   18 while_stmt: WHILE cond @5 DO stmt_list $@6 . $@7 ENDWHILE
+
+    $default  reduce usando la regla 17 ($@7)
+
+    $@7  ir al estado 66
+
+
+estado 64
+
+   23 for_stmt: FOR VAR @8 TO expr @9 . stmt_list $@10 $@11 ENDFOR
+
+    VAR     desplazar e ir al estado 1
+    OUTPUT  desplazar e ir al estado 2
+    IF      desplazar e ir al estado 3
+    WHILE   desplazar e ir al estado 4
+    FOR     desplazar e ir al estado 5
+
+    stmt_list    ir al estado 67
+    simple_stmt  ir al estado 7
+    if_stmt      ir al estado 8
+    while_stmt   ir al estado 9
+    for_stmt     ir al estado 10
+    assig_stmt   ir al estado 11
+    output_stmt  ir al estado 12
+
+
+estado 65
+
+   12 if_stmt: IF cond @1 THEN stmt_list @2 $@3 . otro $@4 ENDIF
+
+    ELSE  desplazar e ir al estado 68
+
+    $default  reduce usando la regla 14 (otro)
+
+    otro  ir al estado 69
+
+
+estado 66
+
+   18 while_stmt: WHILE cond @5 DO stmt_list $@6 $@7 . ENDWHILE
+
+    ENDWHILE  desplazar e ir al estado 70
+
+
+estado 67
+
+    2 stmt_list: stmt_list . simple_stmt
+   23 for_stmt: FOR VAR @8 TO expr @9 stmt_list . $@10 $@11 ENDFOR
+
+    VAR     desplazar e ir al estado 1
+    OUTPUT  desplazar e ir al estado 2
+    IF      desplazar e ir al estado 3
+    WHILE   desplazar e ir al estado 4
+    FOR     desplazar e ir al estado 5
+
+    $default  reduce usando la regla 21 ($@10)
+
+    simple_stmt  ir al estado 27
+    if_stmt      ir al estado 8
+    while_stmt   ir al estado 9
+    for_stmt     ir al estado 10
+    $@10         ir al estado 71
+    assig_stmt   ir al estado 11
+    output_stmt  ir al estado 12
+
+
+estado 68
+
+   13 otro: ELSE . stmt_list
+
+    VAR     desplazar e ir al estado 1
+    OUTPUT  desplazar e ir al estado 2
+    IF      desplazar e ir al estado 3
+    WHILE   desplazar e ir al estado 4
+    FOR     desplazar e ir al estado 5
+
+    stmt_list    ir al estado 72
+    simple_stmt  ir al estado 7
+    if_stmt      ir al estado 8
+    while_stmt   ir al estado 9
+    for_stmt     ir al estado 10
+    assig_stmt   ir al estado 11
+    output_stmt  ir al estado 12
+
+
+estado 69
+
+   12 if_stmt: IF cond @1 THEN stmt_list @2 $@3 otro . $@4 ENDIF
+
+    $default  reduce usando la regla 11 ($@4)
+
+    $@4  ir al estado 73
+
+
+estado 70
+
+   18 while_stmt: WHILE cond @5 DO stmt_list $@6 $@7 ENDWHILE .
+
+    $default  reduce usando la regla 18 (while_stmt)
+
+
+estado 71
+
+   23 for_stmt: FOR VAR @8 TO expr @9 stmt_list $@10 . $@11 ENDFOR
+
+    $default  reduce usando la regla 22 ($@11)
+
+    $@11  ir al estado 74
+
+
+estado 72
+
+    2 stmt_list: stmt_list . simple_stmt
+   13 otro: ELSE stmt_list .
+
+    VAR     desplazar e ir al estado 1
+    OUTPUT  desplazar e ir al estado 2
+    IF      desplazar e ir al estado 3
+    WHILE   desplazar e ir al estado 4
+    FOR     desplazar e ir al estado 5
+
+    $default  reduce usando la regla 13 (otro)
+
+    simple_stmt  ir al estado 27
+    if_stmt      ir al estado 8
+    while_stmt   ir al estado 9
+    for_stmt     ir al estado 10
+    assig_stmt   ir al estado 11
+    output_stmt  ir al estado 12
+
+
+estado 73
+
+   12 if_stmt: IF cond @1 THEN stmt_list @2 $@3 otro $@4 . ENDIF
+
+    ENDIF  desplazar e ir al estado 75
+
+
+estado 74
+
+   23 for_stmt: FOR VAR @8 TO expr @9 stmt_list $@10 $@11 . ENDFOR
+
+    ENDFOR  desplazar e ir al estado 76
+
+
+estado 75
+
+   12 if_stmt: IF cond @1 THEN stmt_list @2 $@3 otro $@4 ENDIF .
+
+    $default  reduce usando la regla 12 (if_stmt)
+
+
+estado 76
+
+   23 for_stmt: FOR VAR @8 TO expr @9 stmt_list $@10 $@11 ENDFOR .
+
+    $default  reduce usando la regla 23 (for_stmt)

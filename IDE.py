@@ -13,7 +13,7 @@ from IRGenerator import Generator
 class Helper():
     def __init__(self) -> None:
         self.change_theme1()
-        self.fuente_font = 'Consolas 16'  
+        self.fuente_font = 'Consolas 16'
     
     def change_theme1(self):
         self.color_normal = self.rgbToHex((213, 206, 217))
@@ -105,14 +105,14 @@ class IDEFrame(Frame):
         self.container.config(menu=self.menu_bar)
 
         self.edit_area = Text(
-                                self, 
-                                background=self.helper.color_background2, 
-                                foreground=self.helper.color_normal, 
-                                insertbackground=self.helper.color_normal, 
-                                borderwidth=10, 
-                                relief='flat', 
-                                font=self.helper.fuente_font
-                                )
+                            self, 
+                            background=self.helper.color_background2, 
+                            foreground=self.helper.color_normal, 
+                            insertbackground=self.helper.color_normal, 
+                            borderwidth=10, 
+                            relief='flat', 
+                            font=self.helper.fuente_font
+                            )
         self.edit_area.pack(fill='both', expand=1)
         
         self.edit_area.bind('<KeyRelease>', self.changes)
