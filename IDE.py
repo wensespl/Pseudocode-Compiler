@@ -6,8 +6,8 @@ from pathlib import Path
 from tkterminal import Terminal
 import re, subprocess
 
-from Parser import Parser
-from IRGenerator import Generator
+from src.Parser import Parser
+from src.IRGenerator import Generator
 
 
 class Helper():

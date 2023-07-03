@@ -1,9 +1,9 @@
 from llvmlite import ir
 from llvmlite import binding
 
-import AST
-from Lexer import Lexer
-from Parser import Parser
+from . import AST
+from .Lexer import Lexer
+from .Parser import Parser
 
 class Generator:
     
