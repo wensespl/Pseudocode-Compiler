@@ -64,7 +64,7 @@ otro: ELSE stmt_list
 
 while_stmt: WHILE cond {generaCodigo(SALTAR1,$2,'?','-');$$=cx;} DO stmt_list {generaCodigo(BUCLE_WHILE,$3,'-','-');}{TCodigo[$3].a2=cx+1;} ENDWHILE;
 
-for_stmt: FOR VAR {$$=localizaSimb(lexema,VAR);} TO expr {generaCodigo(SALTAR_FOR,$3,$5,'?');$$=cx;} stmt_list {generaCodigo(BUCLE_FOR,$3,$6,'-');}{TCodigo[$6].a3=cx+1;} ENDFOR;
+for_stmt: FOR VAR {$$=localizaSimb(lexema,VAR);} '=' expr {generaCodigo(ASIGNAR,$3,$5,'-');} TO expr {generaCodigo(SALTAR_FOR,$3,$8,'?');$$=cx;} stmt_list {generaCodigo(BUCLE_FOR,$3,$9,'-');}{TCodigo[$9].a3=cx+1;} ENDFOR;
 
 assig_stmt: VAR {$$=localizaSimb(lexema,VAR);} '=' expr {generaCodigo(ASIGNAR,$2,$4,'-');};
 

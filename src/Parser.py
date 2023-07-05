@@ -1,8 +1,8 @@
 import sys
 from ply import yacc
 
-from . import AST
-from .Lexer import Lexer
+from src import AST
+from src.Lexer import Lexer
 
 class Parser:
     

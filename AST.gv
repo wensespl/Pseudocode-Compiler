@@ -1,0 +1,5 @@
+graph AST {
+	x [label="int:x"]
+	5 [label="int:5"]
+	x -- 5
+}

@@ -1,9 +1,8 @@
-from Parser import Parser
-from IRGenerator import Generator
+from src.Parser import Parser
+from src.ASTGraph import Grapher
 
 if __name__ == "__main__":
-    filename = "./examples/codefor.spl"
-    output = "output.ll"
+    filename = "./examples/graphtest.spl"
     
     input_file = open(filename)
     lines = [line.lstrip() for _, line in enumerate(input_file) if line.strip()]
@@ -13,9 +12,6 @@ if __name__ == "__main__":
     text = ''.join(lines)
     
     ast = Parser().parse(text)
-        
-    ir = Generator().generate(ast, output)
     
-    output_file = open(output,"w+")
-    output_file.write(str(ir))
-    output_file.close()
+    Grapher().generate(ast)
+    
