@@ -169,7 +169,7 @@ class IDEFrame(Frame):
         
         self.bison_window = Toplevel(self.container)
         
-        window_width = 800
+        window_width = 1000
         window_height = 800
 
         screen_width = self.winfo_screenwidth()
@@ -185,7 +185,7 @@ class IDEFrame(Frame):
             self.bison_window, borderwidth=10, relief='flat', font=self.helper.fuente_font)
         edit_area.pack(fill='both', expand=1)
         
-        pathexe = Path("project_bison/SPL.exe")
+        pathexe = Path("./project_bison/SPLFUN2.exe")
         pathfile = self.actual_filepath
         
         output = subprocess.run([pathexe, '<', pathfile], shell=True, capture_output=True)

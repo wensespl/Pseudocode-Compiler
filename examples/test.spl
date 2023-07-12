@@ -2,8 +2,8 @@ x = 2.5
 y = 3 + 4
 z = 2
 
-SALIDA x + y / 2 * 3
-SALIDA z * 2 / 7 - 6 + 4
+SALIDA x + y / 2 * 3;
+SALIDA z * 2 / 7 - 6 + 4;
 
 w = x * (3 / y) + 4.5
 
@@ -17,7 +17,7 @@ SINO
   a = 2
 FINSI
 
-SALIDA a
+SALIDA a;
 
 c = 0
 i = 0
@@ -26,11 +26,15 @@ MIENTRAS i < 4 HACER
   i = i + 1
 FINMIENTRAS
 
-SALIDA c
+SALIDA c;
 
 b = 0
 PARA j = 0 HASTA 5
-  b = b + 1
+  PARA k = 0 HASTA 4
+    b = b + 1
+  FINPARA
 FINPARA
 
-SALIDA b
+SALIDA b;
+
+
